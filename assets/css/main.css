@@ -13,7 +13,8 @@
   --color2-2: #dccbdb;
   --color3: #cfcdaa;
   --color3-2: #e7e4bd;
-  --color4: #529664; 	/*darkest purple, darker shade than color 1*/
+  --color4: #529664; 	/*darker shade than color 1*/
+  --color4: #3d704b; 	/*darkest of colors 1 and 4*/
 }
 
 html, body, div, span, applet, object,
@@ -3246,7 +3247,7 @@ input, select, textarea {
 			}
 
 		.wrapper.alt {
-			background-color: #261c3e;
+			background-color: var(--color5);
 		}
 
 		.wrapper.style1 {
