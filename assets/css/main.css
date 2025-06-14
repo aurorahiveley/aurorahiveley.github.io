@@ -3772,7 +3772,7 @@ input, select, textarea {
 			}
 
 			#sidebar nav a:before {
-				background: #3c2c62;
+				background: var(--color5); /*could be color6, even darker*/
 			}
 
 			#sidebar nav a:after {
