@@ -8,6 +8,7 @@
 
 :root {
   --primary-color: #ff4800; /* Define a root variable for primary color */
+  --color2: #15ff00;
 }
 
 html, body, div, span, applet, object,
@@ -201,10 +202,10 @@ input, select, textarea {
 		}
 
 			h1.major:after {
-				background-image: -moz-linear-gradient(to right, var(--primary-color), #b74e91);
-				background-image: -webkit-linear-gradient(to right, var(--primary-color), #b74e91);
-				background-image: -ms-linear-gradient(to right, var(--primary-color), #b74e91);
-				background-image: linear-gradient(to right, var(primary-color), #b74e91);
+				background-image: -moz-linear-gradient(to right, var(--primary-color), var(--color2));
+				background-image: -webkit-linear-gradient(to right, var(--primary-color), var(--color2));
+				background-image: -ms-linear-gradient(to right, var(--primary-color), var(--color2));
+				background-image: linear-gradient(to right, var(primary-color), var(--color2));
 				-moz-transition: max-width 0.2s ease;
 				-webkit-transition: max-width 0.2s ease;
 				-ms-transition: max-width 0.2s ease;
@@ -2448,7 +2449,7 @@ input, select, textarea {
 		input[type="radio"]:checked + label:before {
 			background: #ffffff;
 			border-color: #ffffff;
-			color: #b74e91;
+			color: var(--color2);
 			content: '\f00c';
 		}
 
@@ -2556,7 +2557,7 @@ input, select, textarea {
 				}
 
 				.wrapper.style3 .icon.major:before {
-					color: #b74e91;
+					color: var(--color2);
 				}
 
 				.wrapper.style3-alt .icon.major:before {
@@ -3260,7 +3261,7 @@ input, select, textarea {
 		}
 
 		.wrapper.style3 {
-			background-color: #b74e91;
+			background-color: var(--color2);
 		}
 
 		.wrapper.style3-alt {
@@ -3769,10 +3770,10 @@ input, select, textarea {
 			}
 
 			#sidebar nav a:after {
-				background-image: -moz-linear-gradient(to right, var(--primary-color), #b74e91);
-				background-image: -webkit-linear-gradient(to right, var(--primary-color), #b74e91);
-				background-image: -ms-linear-gradient(to right, var(--primary-color), #b74e91);
-				background-image: linear-gradient(to right, var(--primary-color), #b74e91);
+				background-image: -moz-linear-gradient(to right, var(--primary-color), var(--color2));
+				background-image: -webkit-linear-gradient(to right, var(--primary-color), var(--color2));
+				background-image: -ms-linear-gradient(to right, var(--primary-color), var(--color2));
+				background-image: linear-gradient(to right, var(--primary-color), var(--color2));
 				-moz-transition: max-width 0.2s ease;
 				-webkit-transition: max-width 0.2s ease;
 				-ms-transition: max-width 0.2s ease;
@@ -3861,7 +3862,7 @@ input, select, textarea {
 
 						#sidebar nav a:after {
 							background-image: none;
-							background-color: #b74e91;
+							background-color: var(--color2);
 						}
 
 		}
