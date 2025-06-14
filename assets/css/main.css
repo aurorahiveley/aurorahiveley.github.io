@@ -18,7 +18,7 @@
 }
 
 div.relative {
-  position: relative;
+  position: absolute;
   right: 30px;
 }
 
