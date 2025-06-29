@@ -1372,14 +1372,14 @@ print(`example: thm41(4) `):
 elif nargs=1 and args[1]=conj42 then
 print(`conj42(n): verifies Conjecture 4.2`):
 print(`inputs: n`):
-print(`outputs: set of {C_3(f_{CS}(x)), [C_3(f_S(x)) for all cyclic strategies S ]}`):
+print(`outputs: set of {[x^3](f_{CS}(x)), [[x^3](f_S(x)) for all cyclic strategies S ]}`):
 print(`example: conj42(4) `):
 
 
 elif nargs=1 and args[1]=thm43 then
 print(`thm43(n): verifies Theorem 4.3`):
 print(`inputs: n`):
-print(`outputs: set of {C_3(f_{CS}(x)), [C_3(f_S(x)) for all inductive strategies S ]}`):
+print(`outputs: set of {[x^3](f_{CS}(x)), [[x^3](f_S(x)) for all inductive strategies S ]}`):
 print(`example: thm43(5) `):
 
 
@@ -1426,7 +1426,7 @@ print(`example: thm49(5) `):
 elif nargs=1 and args[1]=thm410 then
 print(`thm410(n): verifies Theorem 4.10`):
 print(`inputs: n`):
-print(`outputs: set of {C_3(f_{CSL}(x)), [C_3(f_S(x)) for all inductive strategies S ]}`):
+print(`outputs: set of {[x^3](f_{CSL}(x)), [[x^3](f_S(x)) for all inductive strategies S ]}`):
 print(`example: thm43(5) `):
 
 
@@ -1482,7 +1482,7 @@ end:
 
 
 # (experimental) verification of Conjecture 4.2 for input n
-# output is a list [m,C] where m = C_3(f_CS(x)) 
+# output is a list [m,C] where m = [x^3](f_CS(x)) 
 # and C is the set of all cubic coefficients for the generating functions of deranged strategies of length n 
 # we expect C to be a set of elements all smaller than m 
 
@@ -1508,7 +1508,7 @@ end:
 
 
 # verification of Theorem 4.3 for input n 
-# output is a set of {C_3(f_{CS}(x)), [C_3(f_S(x)) for all inductive strategies S ]}
+# output is a set of {[x^3](f_{CS}(x)), [[x^3](f_S(x)) for all inductive strategies S ]}
 # expecting the set {m, [list of numbers smaller than m]}
 
 thm43 := proc(n) local C,c,m,i:
@@ -1580,7 +1580,7 @@ end:
 
 
 # verification of Theorem 4.10
-# output is a set of {C_3(f_{CSL}(x)), [C_3(f_S(x)) for all cyclic strategies S ]}
+# output is a set of {[x^3](f_{CSL}(x)), [[x^3](f_S(x)) for all cyclic strategies S ]}
 # note that we removed both left and right shifting strategies from the comparison set, for obvious reasons. 
 # and furthermore this verification is trivial for n <= 3 since the only strategies of those lengths *are* cyclic shift.
 # expecting the set {m, [list of numbers larger than m]}
