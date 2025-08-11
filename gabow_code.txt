@@ -1,0 +1,1069 @@
+######################################################################
+## gabow.txt Save this file as gabow.txt  to                         #
+# use it, stay in the                                                #
+## same directory, get into Maple (by typing: maple <Enter> )        #
+## and then type:  read  gabow.txt<Enter>                            #
+## Then follow the instructions given there                          #
+##                                                                   #
+## Written by Omar Aceval Garcia, Pablo Blanco, Aurora Hiveley       #
+##  and Lucy Martinez, Rutgers University                            # 
+######################################################################
+
+
+print(`First Written : April 2025 : tested for Maple 2021 `):
+print(`Version: April 2025  `):
+print():
+print(`This is gabow.txt, A Maple package`):
+print(`accompanying Omar Aceval Garcia, Pablo Blanco, Aurora Hiveley and Lucy Martinez's  article: `):
+print(`Implementing Gabow's Algorithm on Edge Connectivity`):
+
+print():
+print(`The most current version is available on WWW at:`):
+print(` INSERT WEBSITE HERE .`):
+print(`Please report all bugs to: pablo dot blancoh at rutgers dot edu .`):
+print(``):
+
+print(`----------------------------------------------------`):
+
+print():
+print(`To see the major procedures in this package, type "Help()"`):
+
+print():
+print(`For  a list of the SUPPORTING functions type "Help1();" `):
+print(`For explanation of each procedure, type "Help(procedure_name)"`):
+print():
+ print(`----------------------------------------------------`):
+print(`----------------------------------------------------`):
+
+with(combinat):
+
+
+
+HelpDev:=proc():
+if args=NULL then
+ print(`The developer procedures are: GR, generateT1,generateT,`):
+ print(`RootedTree,generateForest,dirEdges, regEdges`):
+else
+ Help(args):
+fi:
+end:
+
+
+Help:=proc():
+if args=NULL then
+print(`The main (user) procedures are: DFS, kInt, Gabow `):
+print(` `):
+
+
+elif nargs=1 and args[1]=GR then
+print(`GR(G): Inputs a directed graph G, flipts the direction of all the edges`):
+print(`of G and outputs the resulting graph. Try:`):
+print(` GR([{2},{3},{}]); `):
+
+
+elif nargs=1 and args[1]=generateT1 then
+print(`generateT1(G,s): Inputs a directed graph G and a starting vertex s`):
+print(`that is the root, ouputs the set of edges in the tree T1 which`):
+print(`by Gabow's algorithm, T1 has the properties that s has in-degree 0`):
+print(`and the rest of the vertices in T1 have in-degree 1. Try:`):
+print(`generateT1([{3},{1,3},{4},{1}],1)`):
+
+
+elif nargs=1 and args[1]=generateT then 
+print(`generateT(n,E,k,s): Inputs the number of vertices n, edge set E of G\T, iteration k, and root s of tree`):
+print(`Outputs the largest f-tree possible built on G\T for iteration k according to DFS. Try:`):
+print(`E := {[1,2],[2,3],[3,4],[4,5],[5,1],[5,2],[1,3],[2,4]}: generateT(5,E,2,1);`):
+
+
+elif nargs=1 and args[1]=RootedTree then
+print(`RootedTree(n,k,D,R,s): Inputs a positive integer n, a table D which specifies`):
+print(`the in-degree of all vertices, a table R which stores the roots of the f-trees, and a source vertex s`):
+print(`and initializes the k-th rooted tree on an n-vertex graph.`):
+print(`The methods in the module RootedTree are the following:`):
+print(`join(e): add an edge e to F`):
+print(`par(v): the parent of v in the rooted tree`):
+print(`dep(v): the depth of v in the rooted tree`):
+print(`paredge(v): returns the edge between v and its parent`):
+print(`Try:`):
+print(`F:=RootedTree(n,k,D,R):`):
+print(` F:-join([10,9]); F:-par(v); F:-dep(v); F:-paredge(v); `):
+ 
+ 
+elif nargs=1 and args[1]=generateForest then 
+print(`generateForest(n,E,k): Inputs the number of vertices n, edge set E of G\T, and iteration k.`):
+print(`Outputs a forest on Tk built by running generateT for all possible roots in G\T and adding each valid f-tree to the forest.`):
+print(`Any leftover vertices are added to the forest as isolated vertices at the very end. Try:`):
+print(`E := {[1,2],[2,3],[3,4],[4,5],[5,1],[5,2],[1,3],[2,4]}: generateForest(5,E,2);`):
+
+
+elif nargs=1 and args[1]=dirEdges then
+print(`dirEdges(n,E): Inputs number of vertices n of a directed graph and the edge set E in the usual form {[a,b] : a --> b}`):
+print(`Outputs edge set in the directed form [{E^+(v)} : v in V]. Try:`):
+print(` dirEdges(4,{[1,2],[2,3],[3,4],[1,4],[3,1]}); `):
+
+
+elif nargs=1 and args[1]=regEdges then
+print(`regEdges(E): Inputs the edge set of a directed graph in the form [{E^+(v)} : v in V].`):
+print(`Outputs edge set in the usual form {[a,b] : a --> b}. Try:`):
+print(`regEdges([{3}, {1}, {2}, {1, 3}]); `):
+ 
+
+
+
+elif nargs=1 and args[1]=DFS then
+print(`DFS(G,s,dir): Inputs a directed graph G, a starting vertex s and `):
+print(`and an optional parameter type which by default will be set to dir,`):
+print(`otherwise, it can be set to undir for undirected edges, and`):
+print(`uses the depth-first search (DFS) algorithm to traverse the graph`):
+print(`and outputs an ordering on the vertices. Try:`):
+print(`DFS([{}, {1}, {1}, {1}, {3}, {3}, {3}],1,dir);`):
+
+
+elif nargs=1 and args[1]=kInt then
+print(`kInt(G,s): Inputs a directed graph G, a source vertex s and`):
+print(`initializes a k-intersection of G.`):
+print(`The methods in the module kInt are the following:`):
+print(`size(): outputs the size of the T`):
+print(`used(): outputs a table S. S[e] outputs the index of the tree T[j] which used edge e. If`):
+print(`there was no such tree, S[e] outputs 0.`):
+print(`parent(v,i): outputs the parent of vertex v in tree T[i]`):
+print(`root(v): outputs the root of vertex v in tree T[k]`):
+print(`NOTE TO USER: always use extend() before using grow().`):
+print(`extend(): initializes a new RootedTree object in kInt and uses DFS to construct it. Returns`):
+print(`FAIL if DFS did not find a spanning tree (you should try grow()).`):
+print(`grow(): uses Gabow's algorithm to try to turn the newest RootedTree into a tree. If this fails,`):
+print(` returns FAIL.`):
+print(`Try:`):
+print(`T:=kInt(G,s):`):
+print(`T:-size(); T:-parent(v,i); T:-root(v);`):
+
+
+
+
+elif nargs=1 and args[1]=Gabow then
+print(`Gabow(G): Inputs a directed graph G and returns the maximum size of a complete k-intersection. Try:`):
+print(`G:=RSCG(30,4);`):
+print(`Gabow(G);`):
+else
+ print(`There is no such thing as`, args):
+fi:
+end:
+
+
+################################################################# begin Gabow functions
+
+# G is a directed graph. Returns the maximum size of a complete k-intersection.
+Gabow:=proc(G) local K,P,s,k:
+ s:=1: # assume G has a vertex
+ K:=kInt(G,s):
+ 
+ # extend() will do the following:
+ # add a RootedTree to K. 
+ # "Initialize" the new RootedTree by using DFS.
+ # FOR ONLY the first call to extend: return FAIL if DFS did not find a spanning TREE.
+
+ if K:-extend()=FAIL then:
+  return(0):                        # couldn't even find T[1]... the graph was not even strongly connected or something is broken
+ fi:
+
+ k:=1:
+
+ # grow() will do the following:
+ # run several rounds (at the k-th iteration) using augmenting paths..
+ # then augment. returns FAIL if it failed to find some augmenting path.
+
+ # in other words, extend() "merely" makes a spanning forest in K (a spanning tree if DFS is lucky) using generateTree.
+ # grow() tries to make K a COMPLETE k-intersection (by using augmenting paths). If extend() was lucky, grow() does nothing :D
+
+ while K:-grow() <> FAIL do:
+  if K:-extend() = FAIL then:
+   return(k):
+  fi:
+  k++:
+ od:
+
+ k:
+end:
+
+# initializes a k-intersection of a directed graph G
+# After doing T:=kInt(G,s):, try: 
+# T:-size();
+# T:-parent(v,i):  # outputs the parent of vertex v in tree T[i] 
+# T:-root(v):      # outputs the root of vertex v in tree T[k] 
+# etc.
+# s is as in the paper
+kInt:=proc(G::list,s::posint):
+ module(): 
+  export size, parent, depth, pointer, root, extend, grow, trees, used,FindAugPath:
+  local n,e,E,T,i,j,k,D,R,IniR,Status:
+  ## initializing variables ##
+  n:=nops(G):
+  E:= [seq(seq([j, i], j in G[i]), i=1..n)]:   
+  T:=table():                      # we can store our trees T[1],...,T[k] as a table
+  k:=0:                            # this is the number of trees we have in our kInt
+  D:=table():                      # a table that specifies the in-degree of a vertex inside T
+  Status:=table():                 # Status[e] will tell give you the index of the tree that uses edge e. If it is unused, Status[e] = 0.
+ 
+  IniR:=table():                   # the default root table
+  for e in E do:
+   Status[e]:=0:                   # whenever you use T[i]:-join(e):  OR T[j]:-replace(f,e), make sure to update Status.
+  od:  
+
+  # K:=kInt(): 
+  # K:-used():
+  used:= ()->op(Status):
+
+  for j from 1 to n do:
+   D[j]:=0:      # initially all in-degree zero
+   IniR[j]:=j:   # every vertex is its own root
+  od:
+
+  R:=op(IniR):        # the root of a vertex v, R[v], is the root of the f-tree (in T[k]) to which v belongs.
+  ## all variables have been initialized ##
+  
+
+
+  # returns the current size of the k-intersection:
+  size:=()->k:
+
+  ## Sample call: S:=kInt([{2},{3},{1}]): S:-parent(v,i):
+  parent:=(v,i)-> (T[i]):-par(v): # extracts the parent of vertex v in T[i].  
+  depth:=(v,i)-> (T[i]):-dep(v):
+  pointer:=(v,i)-> (T[i]):-paredge(v):
+  root:=(v)->R[v]:
+
+  grow:=proc(safety:=true):
+   # note that this procedure will handle both the "Round Step" and the "Augment step" as described in the Gabow paper.
+  
+   # check if extend() made a tree. if so, return NULL.
+   if T[k]:-isTree() then:
+    return(NULL):
+   fi:
+   
+   if safety = false then:
+	# use FindAugPath
+   fi:
+
+
+   # If T[k] is not a tree, execute the "Augment Step" (repeatedly) by calling FindAugPath. 
+   # if FindAugPath = FAIL, return FAIL
+   # otherwise, use the output of FindAugPath to augment
+   
+   return(FAIL):
+  end:
+  
+  # initializes a new RootedTree in our k-intersection and uses DFS
+  extend:=proc() local EGT,e,t,v:
+   k++:
+   R:=op(IniR): # reset the roots because we have a new T[k].
+   T[k]:= RootedTree(n,k,D,R,s):
+   
+   # AT THE END OF A ROUND "update roots" and update "depths". see paper.
+
+    EGT := {}:    # edges of G\T in the standard form [a,b] for a-->b
+
+    for e in E do 
+        if Status[e]=0 then 
+            EGT := EGT union {e}:
+        fi:
+    od:
+
+   
+    t := GenerateT(n,EGT,s):  
+
+    if t = FAIL then:
+     return(FAIL):
+    fi:
+
+    ## add edges of t to T and update Status of each edge 
+    for e in regEdges(t[2]) do 
+        T[k]:-join(e);         
+        Status[e] := k:     # index of tree using edge e (equal to iteration number)
+    od: 
+
+    ## update R (root of the tree that v is part of) and D (degrees of vertices in T)
+    #REGT := dirEdges(n,t[2]): 
+    for v from 1 to n do 
+        R[v] := s:
+        D[v] := D[v] + nops(t[2][v]):   # assumes edges are not used in more than one tree 
+    od:
+    
+    t:
+ end:
+    # BEFORE CALLING THIS, MAKE SURE ROOTS,DEPTHS,STATUS,ETC ARE UPDATED
+    # uses the following from kInt: R, Status, G, k
+    # finds an augmented path from z.
+    # If it fails, return FAIL. Otherwise, return [L,e]. L is a table labeling the edges and e is the last edge in the path.
+    FindAugPath:=proc(z) local Q,L,l,co,A,e,j1,isVLabl,LabelStep,v1,rootw,LablRoots,TravQ,a,t,u:
+     Q:=DEQueue(): 
+     i:=1:          # paper says i=1... 
+     l:=NULL:       # substitute for perp symbol
+     L:=table(sparse=-1,[]):             # these are edge labels; calligraphic l in the paper. Unlabelled edges will return -1.
+     isVLabl:=table(sparse=false,[seq([z,j1]=true ,j1=1..k)]):   # this table takes in [v,j1] and tells you if v is the end of a LABELLED edge in the subtree of T[i]. IN PAPER: called L_i
+     LablRoots:=Array([seq(j1=[false,[]] ,j1=1..k)]): # stores r_i, the root of the subtree L_i. LablRoots[j1][1] tells you if it has been initialized yet. LablRoots[j1][2] will give you the initial edge
+     co:=0: # loop counter, to be safe.
+     
+     ### LABEL STEP ###
+     # executes the Label Step on an edge g 
+     # returns g if it is a joining edge, returns NULL otherwise.
+     LabelStep:=proc(g::list) local stat: 
+      L(g):=l:
+      stat:=Status[g]:
+      if stat<>0 then:   # This will ensure that "L_i" is updated. We call "L_i" isVLabl
+       isVLabl[ [g[1], stat] ]:=true:
+       isVLabl[ [g[2], stat] ]:=true:
+      fi:
+    
+      # this code tries to determine the root r_i for the subtree L_i (for use in cycle traversal)
+      if not(LablRoots[stat][1]) then:
+       LablRoots[stat]:=[true, g]:
+      elif nops(LablRoots[stat][2]) = 2 then:
+        LablRoots[stat]:=[true, {op(g)} intersect {op(LablRoots[stat][2])}]:
+        if nops(LablRoots[stat][2]) <> 1 then:
+         error "these edges did not intersect as expected...":
+        fi:
+      fi:
+    
+    
+      if R[g[1]]<>R[g[2]] then: # checking if g is a joining edge. An edge is joining if its ends are in different f-trees.. (they have different roots in T[k])
+       return g:
+      fi:
+    
+      Q:-push_back(g): # add g to the end of the Queue
+      return NULL:
+     end: ###################################
+     
+     # Execute the label step for all edges g in E^-(z)\T
+     for v1 in G[z] do: # vtcs pointing into z
+      if Status[[v1,z]] = 0 then:
+       if LabelStep([v1,z]) <> NULL then:
+        return([op(L),[v1,z]]): # if [v1,z] is a joining edge, then halt. 
+       fi:
+      fi:
+     od:
+    
+     
+     
+     while true do:
+       co++:
+       if co > 10000 then: error "infinite loop? check code.":  fi:
+       
+       ## Next Edge Step
+       if Q:-empty() then:
+         return(FAIL):
+       fi: 
+       e:= Q:-pop_front():
+       if Status[e]=i then: 
+         i:= (i mod k) + 1:
+       fi:
+       ###############
+    
+      if not(isVLabl[e[1],i] and isVLabl[e[2],i]) then:
+       ### Fundamental Cycle Step ###
+       if Status[e] = T[i] then:
+        error "The algorithm shouldve guaranteed that e is not in T[i]...":
+       fi:
+         # to find A ... implement the algorithm in Gabow's 1991 paper Sec 2.4
+       if i < k then:
+        rootw:=s:  # for i < k, the root of T[i] is simply s.
+       elif not(isVLabel[e[1],i]) then:
+        u:=e[1]:
+        rootw:=R[u]:
+       elif not(isVLabel[e[2],i]) then:
+        u:=e[2]:
+        rootw:=R[u]:
+       else:
+        error "both ends of e are labeled..":
+       fi:
+    
+       if i < k then:
+        rootw:=s:
+       fi:
+    
+       if not(LablRoots[i][1]) then:
+        error "what is the root???":
+       fi:
+       TravQ:=TraverseCycle(u,LablRoots[i][2] ,rootw, T[i],L): # this is a queue. btw this is A.
+       #########
+    
+       ### Label A Step ### 
+       while not(TravQ:-empty()) do:
+        a:= TravQ:-pop_front(): # this is an edge in the path
+        l:=e:
+        if LabelStep(a) <> NULL then:
+         return([op(L),a]): # ALWAYS DO THIS AFTER USING LABEL STEP
+        fi:
+    
+        # "Let f in E^-(v)". THIS MEANS v:=a[2]. WHY DIDNT THEY SAY IT THIS WAY?
+        if {seq(evalb(L[[t,a[2]]]=-1) ,t in G[a[2]])} = {false} then:
+          for t in G[a[2]] do:
+           if LabelStep([t,a[2]]) <> NULL then:
+             return([op(L),[t,a[2]]]): # NEVERFORGET NEVERFORGET
+           fi:
+          od:
+        fi:
+       od:
+       #########
+      fi:
+      
+     od:
+    
+     
+    end:
+    
+  trees:=()->T: # FOR TESTING PURPOSES
+ end:
+end:
+
+# A rooted tree (or forest) object of a graph on n vertices. Sample calls:
+# UPDATE: RootedTree(n,k,D,R): initializes the k-th rooted tree on an n-vertex graph and takes in a table D 
+# which specifies the in-degree of all vertices and a table R which will store the roots.
+
+# F:-join(e);    # add an edge e to F. Try: F:-join([10,9]):
+# F:-par(v);     # the parent of v in the rooted tree 
+# F:-dep(v);     # the depth of v in the rooted tree
+# F:-paredge(v); # returns the edge between v and its parent
+# F:-isTree();   # returns true iff F is a tree. If false, F is a forest.
+
+# not implemented:
+# F:-replace(f,e); # replace an edge f which is in F with an edge e that is NOT in F. f should be in the fundamental cycle of e.
+
+RootedTree:=proc(n,k,D,R,s):
+ module():
+  export par, dep, paredge, replace,join,iterCo,isTree:
+  local parents, depth, parE,u,i,numEdges:
+  parents:=[seq(i,i=1..n)]:     # at first, everyone is its own parent
+  depth:=[0$n]:          # everyone has depth 0
+  parE:=[NULL$n]:        # no parent edges
+  numEdges:=0:
+
+  par:=u->parents[u]:
+  dep:=u->depth[u]:
+  paredge:=u->parE[u]:
+  iterCo:=()->k:
+
+  # takes in a directed edge e=[x,y] (x->y) and tries to add it to this rooted tree.
+  # note: you should only use this when the current rootedtree object is your LAST rooted tree.
+  join:=proc(e::list) local v,p:
+    # the receiving vertex should be deficient
+    if D[e[2]] >= k then:
+     error "Adding this edge increases the in-degree of the receiving vertex too much!":
+    fi:    
+    
+    if e[2] = s then:
+     error "Adding this edge increases the in-degree of the source.":
+    fi:    
+
+    v:=e[2]: # since v used to be deficient... that means it was a root (no longer)
+    p:=e[1]: # the f-tree that p was in contains the root, making it the parent of v
+    
+    parents[v]:=p:
+    depth[v]:=depth[p]+1:
+    parE[v]:=e:
+    D[v]++:
+    R[v]:=R[p]: # the root of v comes from the root of p
+    numEdges++:
+    return(v): # for convenience, we return the vertex that just had its entries updated
+  end:
+
+  isTree:=()->evalb(numEdges=n-1):
+
+
+  # 
+  replace:=proc(f::list, e::list):  
+
+  end:
+  
+ end:
+end:
+
+#####
+
+# heavily based on aurora's code for generateT. Patched and slightly optimized. Finds span tree with every vtx in-degree = 1 except for the source that has in-degree 0.
+GenerateT:=proc(n,E,s) local ord,H,k,Q,J,T,i,vT,l,z:
+ k:=1:
+ H := dirEdges(n,E):   # recode edges in the format [{E^-(v1)}, {E^-(v2)}, ..., {E^-(vn)}]
+ ord:=DFS(H,s,dir):
+ if ord = FAIL then:
+	RETURN(FAIL):
+ fi:
+
+ Q:=DEQueue(ord):
+ J:=GR(H): # out neighbors of each  
+ 
+ T := [seq({}, i=1..n)]:   # encoded edges of T1, as sets of in-neighbors for vi 
+ vT := [Q:-pop_front()]:                      # vertices of T1
+
+ while not(Q:-empty()) do:
+    i:=Q:-pop_front():
+    # determine which edge to add (if any)
+    l := 1: 
+    while l<=nops(vT) do 
+        if vT[l] = s and member(s,H[i]) then        # cannot add edges into s, can only add edges from s to i 
+            T[i] := T[i] union {s}:
+            vT := [op(vT),i]:
+            
+        elif vT[l]<>s then 
+            if member(i,H[vT[l]]) and nops(T[vT[l]])<k then 
+                # i points in to vT[l]
+                T[vT[l]] := T[vT[l]] union {i}:     # add i to the in-neighbors of vT[k] in T
+                vT := [op(vT),i]:    # add new vertex to tree 
+		
+            elif member(i,J[vT[l]]) and nops(T[i])<k  then 
+                # vT[l] points to i 
+                T[i] := T[i] union {vT[l]}:         # add vT[l] to the in-neighbors of i in T
+                vT := [op(vT),i]:
+            fi: 
+        fi:
+
+        l++:
+    od:
+ od:
+
+
+# built the thing, now check that each vertex has in-degree k-1 except s
+# i.e. check that it is an f-tree for iter k 
+for z in vT do 
+    if z<>s then 
+        if nops(T[z])<>k then 
+            RETURN(FAIL):
+            # error `Not an f-tree, non-root vertex ` z ` deficient`:
+        fi:
+    elif z=s then 
+        if nops(T[s])<>0 then 
+            RETURN(FAIL):
+            # error `Not an f-tree, in-degree of root vertex is not 0`:
+        fi:
+    fi:
+od:
+
+if vT = [s] then 
+    RETURN(FAIL):
+    # error `The f-tree is only a root. Come back to this case later.`:
+fi:
+
+[vT,T]:
+end:
+
+
+# INCOMPLETE
+## note. Still to be done: write "no join step".
+# given vertices u and ri, a rooted tree F with root Froot. Finds a path in augmenting cycle according to Gabow's algorithm
+# outputs a path as a queue
+TraverseCycle:=proc(u,ri,Froot,F,Labels) local RetQ, common, joining, labeled,rpath,upath,g,d1,d2,l1,l2,P1,P2,f:
+    # we will output the queue RetQ 
+    # Labels: table that stores edge labels. returns -1 if unlabeled.
+   if u=Froot or ri=Froot then:
+        error "From Gabow's long paper, page 20: c is never the root":
+    fi:
+ 
+    common:=false:
+    joining:=false:
+    labeled:=[false,0]: # is the next edge labeled. If so, which path was being traversed.
+    d1:=F:-dep(u): # initial depth at start of traversal
+    d2:=F:-dep(ri): # initial depth
+    l1:=1: # edges used so far in u-traversal
+    l2:=1:
+    d1--:
+    d2--:
+
+    # despite how these have been encoded, these edges are NOT directed
+    P1:=Array([[u,F:-par(u)] ,[0,0]$d1]): # initialize paths
+    P2:=Array([[ri,F:-par(ri)] ,[0,0]$d2]):
+    if F:-par(u) = F:-par(ri) then:
+        common=true:
+        P1:=Array([NULL, u]):  # check this later
+        P2:=Array([NULL,ri]):
+    fi:
+
+    if Labels[P1[1]]<>-1 then:
+        f:=P1[1]:
+        labeled:=[true,1]:
+        P1:=Array([NULL, u]):
+    fi:
+
+    if Labels[P2[1]]<>-1 then:
+        f:=P2[2]:
+        labeled:=[true,2]:
+        P2:=Array([NULL,ri]):
+    fi:
+    
+
+    #### Traversal Step ####
+    while not(common or joining or labeled[1]) do:
+        if d1 = 0 or d2=0 then:
+            error "":
+        fi:
+ 
+        if d1 > d2 then: # note: common edges do not occur in this case
+            # traverse along u path
+            # check for a labeled edge:
+            f:=[P1[l1][2], F:-par(P1[l1][2])]: # this is the upcoming edge. UNDIRECTED
+            if Labels[ f]<>-1 then:
+                labeled := [true,1]:
+                 break:
+            fi:
+
+            l1++:
+            d1--:
+        elif d2 > d1 then:
+            # traverse along ri path
+            # check for a labeled edge:
+            f:=[P2[l2][2], F:-par(P2[l2][2]) ]: # this is the upcoming edge. UNDIRECTED
+            if Labels[f]<>-1 then:
+                labeled := [true,2]:
+                 break:
+            fi:
+
+            l2++:
+            d2--:
+        elif d2=d1 and d1>=1 then:
+            # traverse BOTH
+
+            # have the paths reached a common ancestor?
+            if P1[l1][2] = P1[l2][2] then:  
+                common := true:
+                break:
+            fi:
+            
+            l1++:
+            l2++:
+            d1--:
+            d2--:
+        else 
+            error "this doesn't seem quite right.":
+        fi:
+
+    od:
+
+
+    ### Join Step ###
+    if joining then:
+        return(DEQueue(g))
+    fi:
+
+    ## No_join Step ##
+    
+
+end:
+
+
+############################################## end Gabow functions
+
+############################################### DFS and various tree generation functions
+
+### DEPTH FIRST SEARCH 
+# inputs a directed graph G and a starting vertex s and optional parameter for edge type used in search 
+# default is dir, indicating directed edges. otherwise let type := undir for undirected edges 
+# returns an ordering of vertices as they would be considered by DFS 
+
+DFS := proc(G,s,type := dir) local H,N,ord,Q,v,u,i:
+H := GR(G):         # of form [{E^-(v1)},{E^-(v2)},...]
+ord := []:
+
+if type = dir then 
+    if H[s]={} then 
+        return(FAIL):
+    fi:
+    
+    N := H:     # neighbors of each vertex are only out-degree vertices
+
+elif type = undir then 
+    N := [ seq( {op(H[i]), op(G[i])} , i=1..nops(G))]:
+else 
+    error `Third argument 'type' not recognized. Try 'dir' or undir`:
+fi:
+
+Q := DEQueue(s):     # queue
+
+while Q<>DEQueue() do 
+    v := pop_front(Q):      # select and remove first queue element 
+    ord := [op(ord),v]:     # add v to ordering 
+
+    for i from 1 to nops(N[v]) do
+        u := N[v][-i]:
+
+        if not member(u,ord) and not member(u,Q) then 
+            push_front(Q,u):    # add unvisited out neighbors of v to back of queue
+        fi:
+    od:
+
+od:
+
+ord:
+end:
+
+# written by aurora hiveley, rutgers university 
+# experimental math spring 2025 
+
+# directed graphs are encoded 
+# G = [{E^+(v1)}, {E^+(v2)}, ..., {E^+(vn)}]
+
+############################################# digraph helper functions
+
+### REVERSE DIGRAPH
+# flips direction of all edges of G so that output is 
+# G = [{E^-(v1)}, {E^-(v2)}, ..., {E^-(vn)}]
+
+GR := proc(G) local n,H,i,v:
+n := nops(G):
+H := [seq({},i=1..n)]: # will be GR, starts empty but add edges 
+
+for i from 1 to n do 
+    for v in G[i] do 
+        H[v] := H[v] union {i}:
+    od:
+od:
+
+H:
+end:
+
+# inputs edge set in the usual form {[a,b] : a --> b} 
+# outputs edge set in the directed form [{E^-(v)} : v in V]
+
+dirEdges := proc(n,E) local T,e,i: 
+
+for i from 1 to n do  
+    T[i] := {}:
+od:
+
+for e in E do 
+    T[e[2]] := T[e[2]] union {e[1]}:
+od:
+
+[seq(T[i], i=1..n)]:
+end:
+
+
+
+# inputs edge set in the directed form [{E^+(v)} : v in V]
+# outputs edge set in the usual form {[a,b] : a --> b} 
+
+regEdges := proc(E) local n,F,i,j: 
+n := nops(E):
+F := {}:            # new edge set 
+
+for i from 1 to n do 
+    for j from 1 to nops(E[i]) do 
+        F := F union {[E[i][j],i]}:
+    od:
+od:
+
+F:
+end:
+
+############################################# end digraph helper functions
+
+### BREADTH FIRST SEARCH 
+# inputs a directed graph G and a starting vertex s and optional parameter for edge type used in search 
+# default is dir, indicating directed edges. otherwise let type := undir for undirected edges 
+# returns an ordering of vertices as they would be considered by BFS 
+
+BFS := proc(G,s,type := dir) local H,N,ord,Q,v,i:
+H := GR(G):         # of form [{E^-(v1)},{E^-(v2)},...]
+ord := [s]:
+
+if type = dir then 
+    if H[s]={} then 
+        error `Source vertex s has no out-neighbors`:
+    fi:
+    
+    N := H:     # neighbors of each vertex are only out-degree vertices
+
+elif type = undir then 
+    N := [ seq( {op(H[i]), op(G[i])} , i=1..nops(G))]:
+else 
+    error `Third argument 'type' not recognized. Try 'dir' or undir`:
+fi:
+
+Q := {op(N[s])}:     # queue
+
+while nops(Q)<>0 do 
+    v := Q[1]:
+    Q := Q union (N[v] minus convert(ord,set)):     # add unvisited out neighbors of v to back of queue
+    ord := [op(ord),v]:     # add v to ordering 
+    Q := Q minus {v}:       # remove v from queue
+od:
+
+ord:
+end:
+
+### T1 GENERATOR 
+# inputs a graph G and a starting vertex/root s
+# outputs the set of edges in the tree T1 
+# note that by gabow's construction, s has in-degree 0 
+# and each other vertex in T1 has in-degree 1
+
+generateT1 := proc(G,s) local ord,H,T,vT,i,j,k:
+ord := DFS(G,s,dir):
+H := GR(G):                     # out neighbors of each  
+T := [seq({}, i=1..nops(G))]:   # encoded edges of T1, as sets of in-neighbors for vi 
+vT := {s}:                      # vertices of T1
+
+for i in ord[2..nops(ord)] do 
+    # determine which edge to add (if any)
+    j := 0:               # indicator
+    k := 1: 
+
+    while j=0 and k<=nops(vT) and nops(T[i])<1 do 
+        if vT[k] = s and member(s,G[i]) then        # cannot add edges into s, can only add edges from s to i 
+            T[i] := T[i] union {s}:
+            vT := vT union {i}:
+            
+        elif vT[k]<>s then 
+            if member(i,G[vT[k]]) and T[vT[k]]={} then 
+                # i points in to vT[k]
+                T[vT[k]] := T[vT[k]] union {i}:     # add i to the in-neighbors of vT[k] in T
+                j := 1:
+                vT := vT union {i}:     # add new vertex to tree 
+
+            elif member(i,H[vT[k]]) then 
+                # vT[k] points to i 
+                T[i] := T[i] union {vT[k]}:         # add vT[k] to the in-neighbors of i in T
+                j := 1:
+                vT := vT union {i}:     # add new vertex to tree 
+            fi: 
+        fi:
+
+        k++:
+    od:
+
+    ord := ord[2..nops(ord)]:   # delete first element now that it's been considered
+od:
+
+T:
+end:
+
+
+# input: (RootedTree object) RT = G\T and edge set of G\T encoded E = {{a,b} : a --> b}
+# k := RT:-iterCo() + 1:  # current iteration
+
+generateT := proc(n,E,k,s) local ord,J,T,vT,i,j,l,H,z:
+# edge set E is the old fashioned way {a,b} = a-->b
+H := dirEdges(n,E):   # recode edges in the format [{E^+(v1)}, {E^+(v2)}, ..., {E^+(vn)}]
+
+ord := DFS(H,s,undir):
+J := GR(H):                     # out neighbors of each  
+T := [seq({}, i=1..nops(H))]:   # encoded edges of T1, as sets of in-neighbors for vi 
+vT := {s}:                      # vertices of T1
+
+for i in ord[2..nops(ord)] do 
+    # determine which edge to add (if any)
+    l := 1: 
+
+    while l<=nops(vT) do 
+        if vT[l] = s and member(s,H[i]) then        # cannot add edges into s, can only add edges from s to i 
+            T[i] := T[i] union {s}:
+            vT := vT union {i}:
+            
+        elif vT[l]<>s then 
+            if member(i,H[vT[l]]) and nops(T[vT[l]])<k-1 then 
+                # i points in to vT[l]
+                T[vT[l]] := T[vT[l]] union {i}:     # add i to the in-neighbors of vT[k] in T
+                vT := vT union {i}:     # add new vertex to tree 
+
+            elif member(i,J[vT[l]]) and nops(T[i])<k-1  then 
+                # vT[l] points to i 
+                T[i] := T[i] union {vT[l]}:         # add vT[l] to the in-neighbors of i in T
+                vT := vT union {i}:     # add new vertex to tree 
+            fi: 
+        fi:
+
+        l++:
+    od:
+
+    ord := ord[2..nops(ord)]:   # delete first element now that it's been considered
+od:
+
+# built the thing, now check that each vertex has in-degree k-1 except s
+# i.e. check that it is an f-tree for iter k 
+for z in vT do 
+    if z<>s then 
+        if nops(T[z])<>k-1 then 
+            RETURN(FAIL):
+            # error `Not an f-tree, non-root vertex ` z ` deficient`:
+        fi:
+    elif z=s then 
+        if nops(T[s])<>0 then 
+            RETURN(FAIL):
+            # error `Not an f-tree, in-degree of root vertex is not 0`:
+        fi:
+    fi:
+od:
+
+if vT = {s} then 
+    RETURN(FAIL):
+    # error `The f-tree is only a root. Come back to this case later.`:
+fi:
+
+[vT,T]:
+end:
+
+
+# generates a forest on Tk by running generateT for all possible roots in G\T 
+# adds each valid f-tree to the forest, all leftovers are added as empty f-trees at end
+# i.e. trees with only roots
+
+generateForest := proc(n,E,k) local F,V,vUsed,v,s,eAvail,t:
+F := {}:    # forest, each element is [s,T] where s is the root and T = [V(T), E(T)]
+
+V := {seq(1..n)}:
+vUsed := {}:
+eAvail := E:
+
+for s in V do 
+    t := generateT(n,eAvail,k,s):
+    if t<>FAIL then 
+        F := F union {{s,t[2]}}:
+
+        # delete edges and vertices of new f-tree from consideration 
+        # remember the f-tree forest must be entirely disjoint
+        vUsed := vUsed union t[1]:
+        V := V minus vUsed:
+        eAvail := eAvail minus regEdges(t[2]):
+    fi:
+od: 
+
+
+# once all non-FAIL f-trees have been added to forest,
+# add each remaining vertex as an "empty" f-tree, i.e. just itself as a root 
+
+for v in V do 
+    F := F union {v, {}}:
+od:
+
+
+F:
+end:
+
+############################################### end DFS and various tree generation functions
+
+
+
+
+################################################ testing graphs
+
+#######
+# The goal is to produce example graphs for us to compute k-connectivity on. So we need a procedure that makes a digraph on n vertices and is k-connected. 
+# One way to do this, devised by Omar and Pablo, is to make a random graph H and replace each of its vertices with k-connected graphs, then connect each of these "chunks" by adding k edges between them if the chunks were connected by an edge in H. The following is an explanation on why this works.
+
+# These graphs are more "random" the smaller k is compared to n. So for large k values (relative to n) we might have to rely on special families of graphs isntead. For example: the graph with an edge from  i to each of the "next" k vertices.
+# Assume k+1 <= n/2 in the following:
+# Partition n into N chunks, n = (k+1) + .. + (k+1) + (number bigger than k+1). 
+# Step 1)
+# Make a random *connected* graph H on N vertices. Each term in the above sum corresponds to a vertex of H, and this vertex will turn into a complete graph of that size. This has edge-conn at least k.
+# Step 2)
+# Then each edge {A,B} in H will translate to k edges from chunk A to chunk B, and k from B to A. Here we just added an edge from the first vertex in A to the first k in B (and vice versa) but for less symmetry we can randomize this. 
+# As long as *one* vertex, maybe from the very last chunk, is untouched on step 2, this guarantees edge-connectivity k.
+
+# Explanation: we can remove the outward pointing k edges from any vertex untouched by step 2 to disconnect the graph. So lambda <= k. At least k edges need to be removed, because to prevent vertex a from reaching vertex b in another chunk, you need to either disconnect a (or b) from the rest of its chunk, or prevent a from moving to another chunk, which requires k removals.
+#######
+
+# The procedures LC(p), RG(n), and IsCo(G) are (slight modifications) of procedures from class.
+# I also implemented procedures for spitting out the complete graph Kn(n), the complete digraph KnD(n), and for converting a graph G to its digraph by making each edge bidirectional
+
+# Takes a graph [n,E] and returns the directed graph obtained by making all edges bidirectional
+GtoDG := proc(G) local n,E,i,e,DG:
+n := G[1]:
+E := G[2]:
+DG := [seq({}, i=1..n)]:
+for e in E do 
+  DG[e[1]] := DG[e[1]] union {e[2]}:
+  DG[e[2]] := DG[e[2]] union {e[1]}:
+od:
+DG:
+end:
+
+# Kn(n) and KnD(n) are the complete graph and the directed complete graph of size n.
+Kn := proc(n) local i,j:
+[n, {seq(seq({i,j}, j=(i+1)..n), i=1..n)}]:
+end:
+KnD := proc(n) local i,j:
+[seq({seq(j, j in {seq(1..n)} minus {i})}, i=1..n)]:
+end:
+
+
+# Loaded coin procedure. Copied from class, used just to generate random graphs.
+LC:= proc(p) local a,b, ra: 
+if not (type(p, rational) and p>=0 and p<=1) then 
+ RETURN(FAIL):
+fi:
+a := numer(p):
+b := denom(p):
+ra := rand(1..b)():
+if ra <= a then 
+  true:
+else false:
+fi:	
+end:
+
+# Makes a random graph on n vertices with weight a fraction 0 < p < 1. 
+RG := proc(n, p) local E,i,j:
+E:= {}:
+for i from 1 to n do
+  for j from i+1 to n do
+    if LC(p) then
+      E := E union {{i,j}}:
+    fi:
+  od:
+od:
+[n, E]:
+end:
+
+IsCo := proc(G) local n,N,e,E,i,C1,C2:
+if not (type(G, list) and nops(G) = 2 and type(G[1], integer) and G[1] >=1 and type(G[2], set)) then return(FAIL): fi:
+n := G[1]:
+E := G[2]:
+N := [seq({}, i=1..n)]:
+for e in E do
+  N[e[1]] := N[e[1]] union {e[2]}:
+  N[e[2]] := N[e[2]] union {e[1]}:
+od:
+# N is the list of "neighbors of i" for each i.
+C1 := {1}:
+C2 := C1 union {seq(op(N[i]), i in C1)}:
+while C1 <> C2 do
+  C1 := C2:
+  C2 := C2 union { seq(op(N[i]), i in C2) }:
+od:
+return evalb(nops(C2) = n):
+end:
+
+
+RSCG := proc(n, k) local N,H,E,G,e,i,j,chsizes,chsize,chunk,A,B, chsize1:
+if 2*k + 2 > n then return(`k too big!! try a specific graph instead bozo`): fi:
+N := floor( n/(k+1) ):
+G := [seq({}, i=1..n)]:
+H := RG(N, 1/2): 	# It might be interesting to try sparser graphs, but p=1/2 is probably fine:
+while not IsCo(H) do
+H := RG(N,1/2):
+od:
+E := H[2]:
+
+# First making each chunk a complete graph:
+chsizes := [seq(k+1, i=1..(N-1)), n - (N-1)*(k+1)]: 
+for chunk from 1 to N do
+ chsize := chsizes[chunk]:
+for i from 1 to chsize do
+ G[(chunk-1)*(k+1) + i] := {seq((chunk-1)*(k+1)+j, j in {seq(1..chsize)} minus {i} )}:
+od:
+od:
+G:
+
+# Now connecting chunks
+for e in E do
+## If e[1] and e[2] are chunks, we add an edge from the first vertex of each to the first k vertices of the other.
+## This always leaves the last vertex in each chunk untouched, since each chunk is size > k
+for i from 1 to k do
+ G[(e[2] - 1)*(k+1) + i] := G[(e[2] - 1)*(k+1) + i] union { (e[1]-1)*(k+1)+1 }:
+ G[(e[1] - 1)*(k+1) + i] := G[(e[1] - 1)*(k+1) + i] union { (e[2]-1)*(k+1)+1 }:
+od:
+od:
+G:
+end: 
+
+## Try RSCG(8,3). There are two chunks, of size 4 and 4. Each chunk is a complete graph, and the first 3 elements of each chunk are connected to the first element of the next chunk.
+## Try RSCG(15, 2) a few times, or RSCG(100,2).
+
+
+################################################ end testing graphs
