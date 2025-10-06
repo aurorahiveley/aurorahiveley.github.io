@@ -1,0 +1,967 @@
+### oral qual prep
+# aurora hiveley, rutgers university 
+# last editted: 8/25/25
+
+
+Help:=proc(): 
+
+if nargs=0 then 
+
+print(`Quicksort(L), stableMatch(Vert,prefL), eulerTrail(V,E), kruskalST(V,E), primST(V,E), FFA(V,E), FFA2(V,E), RCG(V,p), RCN(V,p,c)`):
+
+elif nargs=1 and args[1]=Quicksort then
+print(`Quicksort(L): inputs list L of distinct integers and applies Hoare's Quicksort algorithm`):
+print(`example: Quicksort([4,5,2,1,3]) `):
+
+elif nargs=1 and args[1]=stableMatch then
+print(`stableMatch(Vert,prefL): inputs list Vert of 2n vertices and a list prefL of 2n lists of preferences for each vertex`):
+print(`returns a list of matched pairs as 2-element sets`):
+print(`example: stableMatch([a,b,c,d,A,B,C,DD],[[DD,A,C,B],[A,C,DD,B],[C,DD,B,A],[DD,A,C,B],[a,c,d,b],[d,a,b,c],[c,b,d,a],[b,d,c,a]]); `):
+
+elif nargs=1 and args[1]=eulerTrail then
+print(`eulerTrail(V,E): inputs list V of vertices and a set E of edges of the form {v1,v2}`):
+print(`outputs an eulerian trail as a list of vertices along the trail`):
+print(`example: eulerTrail([seq(1..5)], {{1,2},{1,3},{1,4},{1,5},{2,3},{2,4},{2,5},{3,4},{3,5},{4,5}}) `):
+
+elif nargs=1 and args[1]=kruskalST then
+print(`kruskalST(V,E): inputs list V of vertices and a set E of edges of the form [v1,v2,weight]`):
+print(`outputs [w,TE] where w is the weight and TE is the edge set of the spanning tree produced by Kruskal's algorithm`):
+print(`example: kruskalST([seq(1..5)], {[1,2,2],[1,3,2],[1,4,5],[1,5,5],[2,3,4],[2,4,1],[2,5,3],[3,4,4],[3,5,1],[4,5,5]}) `):
+
+elif nargs=1 and args[1]=primST then
+print(`primST(V,E): inputs list V of vertices and a set E of edges of the form [v1,v2,weight]`):
+print(`outputs [w,TE] where w is the weight and TE is the edge set of the spanning tree produced by Prim's algorithm`):
+print(`example: primST([seq(1..5)], {[1,2,2],[1,3,2],[1,4,5],[1,5,5],[2,3,4],[2,4,1],[2,5,3],[3,4,4],[3,5,1],[4,5,5]}) `):
+
+elif nargs=1 and args[1]=FFA then
+print(`FFA(V,E): inputs list V of vertices and a set E of edges of the form [v1,v2,capacity]`):
+print(`applies Ford-Fulkerson's algorithm to augment flow and outputs [f,fE] where f is the total flow and fE is the edge set now with form [v1,v2,flow]`):
+print(`example: FFA({s,t,x,y,z,w},{[s,x,3],[s,y,7],[y,x,5],[x,z,3],[x,w,4],[y,w,3],[z,t,2],[z,w,3],[w,t,6]});  `):
+
+elif nargs=1 and args[1]=FFA2 then
+print(`FFA2(V,E): inputs list V of vertices and a set E of edges of the form [v1,v2,capacity]`):
+print(`the same as FFA(V,E), except that it does not allow negaative flow in edges`):
+print(`example: FFA2({s,t,x,y,z,w},{[s,x,3],[s,y,7],[y,x,5],[x,z,3],[x,w,4],[y,w,3],[z,t,2],[z,w,3],[w,t,6]});  `):
+
+elif nargs=1 and args[1]=RCG then
+print(`RCG(V,p): inputs set V of vertices and probability p between 0 and 1`):
+print(`outputs [V,E] where E is the edge set of a connected graph such that each edge appears with probability p`):
+print(`(some edges may be added to make the resulting graph connected.)`):
+print(`example: RCG({u,v,x,y,z},1/2);  `):
+
+elif nargs=1 and args[1]=RCN then
+print(`RCG(V,p,c): inputs set V of vertices, probability p between 0 and 1, and maximum capacity c >= 0`):
+print(`outputs [V,A] where A is the arc set of a connected network such that each undirected edge appears with probability p`):
+print(`and each arc has randomly generated capacity at most c. The direction of each arc is chosen at random.`); 
+print(`(some arcs may be added to make the resulting graph connected.)`):
+print(`example: RCN({s,t,x,y,z},1/2,5);  `):
+
+fi:
+end:
+
+
+## quicksort - kauers & paule section 1.1
+# 
+# inputs list L of distinct integers 
+# applies Hoare's Quicksort algorithm 
+# note that if elements of L are duplicated, they will only appear once in the output ordering
+
+Quicksort := proc(L) local indic,j,ra,p,l,S,B:
+
+# check if done 
+indic := 0: 
+
+for j from 1 to nops(L)-1 do 
+    if L[j] > L[j+1] then 
+        indic := 1:
+    fi:
+od:
+
+if indic = 0 then 
+    RETURN(L):
+fi:
+
+# pick a random pivot element 
+ra := rand(1..nops(L)):
+p := L[ra()]:               # pivot
+
+# initialize lists of smaller and bigger elements 
+S := []:
+B := []:
+
+for l in L do 
+    if l < p then 
+        S := [op(S),l]:
+    elif l > p then 
+        B := [op(B),l]:
+    fi:
+od:
+
+[op(Quicksort(S)),p,op(Quicksort(B))]:
+
+end:
+
+
+
+
+## stable matching - woods pg 80 
+#
+# given vertex set V and a list of 2n lists each of length n, builds a stable matching 
+# each list ranks the n vertices of other partite set in preferential order, best to worst 
+# by Woods's notation, let one partite set be A,B,C,.... and the other a,b,c,...
+# note that letter D will throw an error in maple, and local variables include x,Y
+
+stableMatch := proc(Vert,prefL) local cancelL,matchL,x,Y,setA,result,ii:
+
+# copy lists for cancellation and build a new placeholder for current match 
+cancelL := prefL:          
+matchL := [0$nops(Vert)]: # list of matches for n vert in A and n vert in B, initialize with zeros
+
+setA := Vert[1..nops(Vert)/2]:
+
+for x in setA do 
+    result:= propose(x,Vert,prefL,cancelL,matchL):    # save and update new versions of matchL and cancelL
+    matchL := result[1]:
+    cancelL := result[2]:
+od:
+
+# reformat matchL to be prettier
+[seq({setA[ii],matchL[ii]}, ii=1..nops(setA))]:
+end:
+
+
+## helper proc as described by woods
+
+propose := proc(x,Vert,prefL,cancelL,matchL) local Y,xnum:
+
+member(x,Vert,'xnum'): # numerical index for x
+Y := cancelL[xnum][1]: # first uncancelled Y in x's preference list
+refuse(Y,x,Vert,prefL,cancelL,matchL):
+
+end:
+
+
+## helper proc as described by woods 
+
+refuse := proc(Y,x,Vert,prefL,cancelL,matchL) local xprime,xind,xpind,xnum,Ynum,newCancel,newMatch:
+
+member(x,Vert,'xnum'): # numerical index for x
+member(Y,Vert,'Ynum'): # numerical index for Y
+
+xprime := matchL[Ynum]:  # Y's current match, if any 
+
+# identify preferential order
+member(x,prefL[Ynum],'xind'):
+
+if xprime = 0 then 
+    xpind := infinity:
+else    
+    member(xprime,prefL[Ynum],'xpind'):
+fi:
+
+# now that we have considered the pair {x,Y}, cancel each from each others' lists
+newCancel := cancel(x,Y,xnum,Ynum,cancelL):
+
+if xpind < xind then
+    newMatch := matchL:
+    newMatch[xnum] := 0:
+    propose(x,Vert,prefL,newCancel,newMatch):
+else 
+    # redefine matchL 
+    newMatch := matchL:
+    newMatch[xnum] := Y:
+    newMatch[Ynum] := x:
+
+    if xprime<>0 then 
+        propose(xprime,Vert,prefL,newCancel,newMatch):
+    else
+        [newMatch,newCancel]:   # return updated lists for use in next loop
+    fi:
+fi:
+
+end:
+
+
+## helper proc: mutual cancellation of a and B from each others lists
+
+cancel := proc(x,Y,xnum,Ynum,cancelL) local ii,jj,kk,cLx,cLY:
+member(x,cancelL[Ynum],'ii'):
+member(Y,cancelL[xnum],'jj'):
+
+cLx := [op(cancelL[xnum][1..jj-1]), op(cancelL[xnum][jj+1..-1])]:
+cLY := [op(cancelL[Ynum][1..ii-1]), op(cancelL[Ynum][ii+1..-1])]:
+
+[seq(cancelL[kk],kk=1..xnum-1), cLx, seq(cancelL[kk],kk=xnum+1..Ynum-1), cLY, seq(cancelL[kk],kk=Ynum+1..nops(cancelL))]:
+end:
+
+
+
+
+## eulerian trail algorithm - hierholzer 1873
+# 
+# inputs graph G = [V,E] where V = {set of vertices} and E = {set of edges as 2-element sets {x,y}}
+# outputs the eulerian circuit as a list of vertices 
+
+eulerTrail := proc(V,E) local vs,T,F,N,VT,trail1,trail2,vnum,i,v,indic:
+indic := eulerCase(V,E):
+
+if indic = 'c' then 
+    vs := {V[rand(1..nops(V))()]}:     # choose any starting vertex
+else 
+    vs := indic:     # encode v's as endpoints of the trail, i.e. the odd degree vertices
+fi:
+
+# build a trail starting at v that either ends back at v (circuit) or ends at other odd degree vertex (trail)
+trail1 := trailBuilder(V,E,vs):
+T := trail1[1]:
+F := trail1[2]:
+
+VT := convert(T,set): 
+N := edgesToNeis(VT,F): # trail vertices' unused edges, given as a set of neighbors 
+
+# only build circuits from here on out
+while N<>[{}$nops(N)] do 
+    # identify next starting vertex 
+    i := 1:
+    while N[i]={} do 
+        i++:
+    od: 
+    v := VT[i]: 
+
+    trail2 := trailBuilder(V,F,{v}):
+    F := trail2[2]:
+    member(v,T,'vnum'):     # numerical index where v occurs in trail 
+
+    T := [op(T)[1..vnum-1], op(trail2[1]), op(T)[vnum+1..-1]]:
+    VT := convert(T,set): 
+    N := edgesToNeis(VT,F):
+od:
+
+T:
+end:
+
+
+## helper: builds a closed trail starting at vertex v
+# returns trail T as a list of vertices and set F of the edges in E unused by T
+
+trailBuilder := proc(V,E,vs) local T,F,f,Nu,v,u,w,unum:
+if nops(vs) = 1 then 
+    T := [op(vs)]:
+    v := op(vs):        # one start and end point 
+elif nops(vs) = 2 then 
+    T := [vs[1]]:
+    v := vs[2]:         # end point 
+else 
+    error `Too many start/end vertices, internal code error.`   # error catcher in case aurora made a mistake
+fi:
+
+F := E:     # make a copy for editting
+
+while T[-1]<>v or nops(T)=1 do 
+    u := T[-1]:
+    member(u,V,'unum'):     # retrieve numbered index
+
+    Nu := {}:
+    for f in F do 
+        if member(u,f) then 
+            Nu := Nu union (f minus {u}):
+        fi:
+    od:
+
+    w := Nu[rand(1..nops(Nu))()]:     # choose random neighbor of last vertex in path 
+    
+    T := [op(T),w]:
+    F := F minus {{u,w}}:
+od:
+
+[T,F]:
+end:
+
+
+## helper: from degree sequence, determines if eulerian trail, circuit, or neither can be constructed
+
+eulerCase := proc(V,E) local N,nOdd,i,setV:
+N := edgesToNeis(V,E):
+nOdd := 0:              # number odd degree vertices
+setV := {}:
+
+for i from 1 to nops(V) do 
+    if nops(N[i]) mod 2 <> 0 then 
+        nOdd++:
+        setV := setV union {V[i]}:
+    fi:
+od:
+
+if nOdd=0 then 
+    return 'c':
+elif nOdd=2 then 
+    return setV:    # return set of odd degree vertices
+else 
+    error `Too many odd degree vertices, no Eulerian trail exists`:
+fi:
+
+end:
+
+
+## helper proc: turns edge set into list of sets of neighbors
+
+edgesToNeis := proc(V,E) local i,N,v,e: 
+N := [{}$nops(V)]:
+
+for i from 1 to nops(V) do 
+    v := V[i]:
+
+    for e in E do 
+        if v in e then 
+            N[i] := N[i] union (e minus {v}):
+        fi:
+    od:
+od:
+
+N:
+end:
+
+
+
+
+### MWST algorithms 
+
+## kruskal's algorithm 
+# input graph G = (V,E) with set of vertices V and set of edges E 
+# where an edge between x and y with weight w takes form [x,y,w] 
+# returns [wt,TE] where w is the weight of the tree and E is the (weightless) edge set 
+
+kruskalST := proc(V,E) local LW,LE,Lind,l,TE,e,v,i,j,k,comps,newComps,xcomp,ycomp,wt:
+
+LW := Quicksort( [ seq( e[3] , e in E) ] ):     # sort edge weights in ascending order 
+LE := []:                                       # sort edges using the weight ordering 
+for l in LW do 
+    for e in E do 
+        if e[3] = l then 
+            LE := [op(LE), e]:
+        fi:
+    od:
+od:
+
+TE := {}: # edge set of the spanning tree 
+wt := 0: # initialize weight of empty tree
+
+# if adding an edge closes a cycle, then the number of connected components won't decrease 
+# probably not the most efficient, but it works. 
+comps := {seq({v}, v in V)}:
+i := 1:
+
+while nops(TE) <> nops(V)-1 do  # tree iff has n-1 edges 
+    e := LE[i]:
+
+    # identify the component that x := e[1] is in 
+    Lind := [seq( member(e[1],comps[k]), k=1..nops(comps) )]:
+    member(true,Lind,'xcomp'):
+
+    # identify the component that y := e[2] is in 
+    Lind := [seq( member(e[2],comps[k]), k=1..nops(comps) )]:
+    member(true,Lind,'ycomp'):
+
+    if xcomp<>ycomp then    # add edge without closing cycle!
+        TE := TE union {{op(e[1..2])}}:
+        wt := wt + e[3]:
+        
+        newComps := comps minus comps[xcomp] minus comps[ycomp]:
+        newComps := newComps union { {op(comps[xcomp]), op(comps[ycomp])} }:
+
+        comps := newComps:
+    fi:
+
+    i++:    # prepare to consider next edge
+od:
+
+[wt,TE]:
+end:
+
+
+
+## prim's algorithm 
+# input graph G = (V,E) with set of vertices V and set of edges E 
+# where an edge between x and y with weight w takes form [x,y,w] 
+# returns [wt,TE] where w is the weight of the tree and E is the (weightless) edge set 
+
+primST := proc(V,E, startv := 'none') local TE,TV,wt,eAvail,e,vAvail,v,LW,l,i:
+if startv = 'none' then 
+    v := V[rand(1..nops(V))()]: # choose random starting vertex 
+else 
+    v := startv:
+fi:
+
+TE := {}:
+TV := {v}:
+wt := 0:
+
+while TV<>convert(V,set) do 
+    # only consider edges between TV and V\TV (else adding an edge that closes a cycle)
+    vAvail := convert(V,set) minus TV: 
+    eAvail := {}: 
+
+    for e in E do 
+        if (member(e[1],TV) and member(e[2],vAvail)) or (member(e[1],vAvail) and member(e[2],TV)) then 
+            eAvail := eAvail union {e}:
+        fi:
+    od:
+
+    # find cheapest weight edge available
+    LW := Quicksort( [ seq( e[3] , e in eAvail) ] ):     # sort edge weights in ascending order 
+    l := []:
+    i := 1:
+    while l = [] do 
+       if eAvail[i][3] = LW[1] then 
+            l := eAvail[i]:
+       fi: 
+       i++:
+    od:
+
+    # add cheapest edge 
+    TE := TE union {{op(l[1..2])}}:
+    TV := TV union {op(l[1..2])}:
+    wt := wt + l[3]:
+od:
+
+[wt, TE]:
+end:
+
+
+
+
+
+
+
+
+## ford-fulkerson algorithm (max flow min cut)
+#
+# input set of vertices V and set of directed edges E where each e in E takes form e = [v1,v2,c]
+# meaning that the arc pointing from v1 to v2 has capacity c 
+
+FFA := proc(V,E) local s,t,u,v,Hin,Hout,i,Eavail,EAll,A,e,eind,eps,P,f,sNeis,sind:
+
+# bookkeeping -- identify s & t, error checking
+
+Hin := inNbrs(V,E):
+Hout := outNbrs(V,E):
+s := 'none':
+t := 'none':
+i := 1:
+while s='none' or t='none' and i <= nops(V) do 
+    if nops(Hin[i])= 0 then     # no inward directed edges
+        s := V[i]:
+    fi:
+    if nops(Hout[i])= 0 then     # no outward directed edges
+        t := V[i]:
+    fi:
+
+    i++:
+od:
+
+if s = 'none' or t='none' then 
+    error `No source or no sink vertex found. Check digraph and retry.`:
+elif s = t then 
+    error `Graph is disconnected. Check digraph and retry.`:
+fi:
+
+
+# set up flow array (mutable), assign all edges flow = 0 
+# A[1..2] := directed edges [u,v]
+# A[3] := capacities 
+# A[4] := flows 
+A := Array([[seq( e[1], e in E)],[seq( e[2], e in E)],[seq(e[3],e in E)], [0$nops(E)]]);
+
+# directed edges without capacities, stored to extract edge indices in order to update flows later
+EAll := [seq([A[1,i],A[2,i]], i=1..nops(E))]:
+
+# determine which edges *could* handle more flow
+Eavail := {}:
+for i from 1 to nops(E) do 
+    if A[3,i] > A[4,i] then     # only a concern for forward facing edges, a different tactic needed for reverse edges (positive flow??)
+        Eavail := Eavail union {[A[1,i],A[2,i]]}:
+    fi:
+od:
+
+# find first s-t path to start loop
+P := pathFinder(V,Eavail,s,t):
+
+# while an s-t path exists, augment flow 
+while P<>[] do 
+
+    # determine how much to augment by
+    eps := infinity:
+    for i from 1 to nops(P)-1 do  
+        u := P[i]:
+        v := P[i+1]:
+
+        if member([u,v],Eavail) then 
+            member([u,v],EAll,'eind'):
+            e := A[3,eind] - A[4,eind] :
+        elif member([v,u],Eavail) then 
+            member([v,u],EAll,'eind'):
+            e := A[3,eind] - A[4,eind] :
+        fi:
+
+        if e < eps then 
+            eps := e:       # keep track of minimum 
+        fi:
+    od:
+
+    # augment!!
+    for i from 1 to nops(P)-1 do  
+        u := P[i]:
+        v := P[i+1]:
+
+        if member([u,v],Eavail) then 
+            member([u,v],EAll,'eind'):
+            A[4,eind] := A[4,eind] + eps:
+        elif member([v,u],Eavail) then 
+            member([v,u],EAll,'eind'):
+            A[4,eind] := A[4,eind] - eps:
+        fi:
+    od:
+
+    # update Eavail 
+    Eavail := {}:
+    for i from 1 to nops(E) do 
+        if A[3,i] > A[4,i] then 
+            Eavail := Eavail union {[A[1,i],A[2,i]]}:
+        fi:
+    od:
+    
+    P := pathFinder(V,Eavail,s,t):  # try to find new path for next loop iter
+od:
+
+
+# calculate total flow out of s 
+member(s,V,'sind'):
+sNeis := Hout[sind]:
+f := 0:
+for v in sNeis do 
+    member([s,v],EAll,'eind'):
+    f := f + A[4,eind]:
+od:
+
+# return total flow and edges with flow information
+[f, {seq( [A[1,i],A[2,i],A[4,i]] , i=1..nops(E)) }]:
+end:
+
+
+
+## helper: given vertex and edge set, find s-t path using DFS
+
+pathFinder := proc(V,E,s,t) local ord,P,v,u,i,F:
+ord := DFST(V,E,s,t,undir): # DFS stops after reaching t (more efficient)
+
+if not member(t,ord) then   # no s-t path found
+    return []:
+fi:
+
+# from ordering, trace path backwards 
+
+P := [t]:
+for i from 1 to nops(ord) do 
+    v := ord[-i]:
+    u := P[1]:
+
+    if member([u,v],E) or member([v,u],E) then 
+        P := [v,op(P)]:
+    fi:
+od:
+
+if P[1]<>s then 
+    error `Internal s-t path finder error.`:
+fi:
+
+P:
+end:
+
+
+## helper: inward pointing neighbors of each vertex
+# output is G = [{E^-(v1)}, {E^-(v2)}, ..., {E^-(vn)}]
+inNbrs := proc(V,E) local n,H,u,v,vind,i,e:
+n := nops(V):
+H := [seq({}, i=1..n)]:
+
+for e in E do 
+    u := e[1]:
+    v := e[2]:
+
+    member(v,V,'vind'):
+    H[vind] := H[vind] union {u}:
+od:
+
+H:
+end:
+
+
+## helper: outward pointing neighbors of each vertex
+# output is G = [{E^+(v1)}, {E^+(v2)}, ..., {E^+(vn)}]
+outNbrs := proc(V,E) local n,H,u,v,uind,i,e:
+n := nops(V):
+H := [seq({}, i=1..n)]:
+
+for e in E do 
+    u := e[1]:
+    v := e[2]:
+
+    member(u,V,'uind'):
+    H[uind] := H[uind] union {v}:
+od:
+
+H:
+end:
+
+
+
+### written by aurora hiveley, rutgers university 
+## for final project in experimental math, spring 2025 semester
+## slightly editted to accommodate alternate digraph notation 
+
+## DEPTH FIRST SEARCH  - WITH TERMINATION 
+# modified so search terminates once vertex t is reached 
+# inputs vertices V and edges E of a directed graph and a starting vertex s, end vertex t, and optional parameter for edge type used in search 
+# default is dir, indicating directed edges. otherwise let type := undir for undirected edges 
+# returns an ordering of vertices as they would be considered by DFS 
+
+DFST := proc(V,E,s,t,type := dir) local H,J,N,ord,Q,v,u,i,sind,vind:
+H := outNbrs(V,E):         # of form [{E^-(v1)},{E^-(v2)},...]
+ord := []:
+
+member(s,V,'sind'):
+
+if type = dir then 
+    if H[sind]={} then 
+        error `Source vertex s has no out-neighbors`:
+    fi:
+    
+    N := H:     # neighbors of each vertex are only out-degree vertices
+
+elif type = undir then 
+    J := inNbrs(V,E):
+    N := [ seq( {op(H[i]), op(J[i])} , i=1..nops(V))]:
+else 
+    error `Third argument 'type' not recognized. Try 'dir' or undir`:
+fi:
+
+Q := DEQueue(s):     # queue
+
+while Q<>DEQueue() and not member(t,ord) do 
+    v := pop_front(Q):      # select and remove first queue element 
+    ord := [op(ord),v]:     # add v to ordering 
+
+    member(v,V,'vind'):
+
+    for i from 1 to nops(N[vind]) do
+        u := N[vind][-i]:
+
+        if not member(u,ord) and not member(u,Q) then 
+            push_front(Q,u):    # add unvisited out neighbors of v to back of queue
+        fi:
+    od:
+
+od:
+
+ord:
+end:
+
+
+
+## ford-fulkerson algorithm ver. 2 (max flow min cut)
+# same as FFA except it does not allow for negative flow 
+#
+# input set of vertices V and set of directed edges E where each e in E takes form e = [v1,v2,c]
+# meaning that the arc pointing from v1 to v2 has capacity c 
+
+FFA2 := proc(V,E) local s,t,u,v,Hin,Hout,i,Eavail,F,EAll,A,e,eind,eps,P,f,sNeis,sind:
+
+# bookkeeping -- identify s & t, error checking
+
+Hin := inNbrs(V,E):
+Hout := outNbrs(V,E):
+s := 'none':
+t := 'none':
+i := 1:
+while s='none' or t='none' and i <= nops(V) do 
+    if nops(Hin[i])= 0 then     # no inward directed edges
+        s := V[i]:
+    fi:
+    if nops(Hout[i])= 0 then     # no outward directed edges
+        t := V[i]:
+    fi:
+
+    i++:
+od:
+
+if s = 'none' or t='none' then 
+    error `No source or no sink vertex found. Check digraph and retry.`:
+elif s = t then 
+    error `Graph is disconnected. Check digraph and retry.`:
+fi:
+
+# directed edges without capacities, stored to extract edge indices in order to update flows later
+EAll := [seq( E[i][1..2], i=1..nops(E) )]:
+# set up residual graph by duplicating direction of any edges not adjacent to s or t 
+F := {}:
+for e in EAll do 
+    if not member(s,e) and not member(t,e) then 
+        F := F union {[e[2],e[1]]}:        # add reverse edge
+    fi:
+od:
+
+EAll := [op(EAll), op(F)]:
+
+# set up flow array (mutable), assign all edges flow = 0 
+# A[1..2] := directed edges [u,v]
+# A[3] := capacities 
+# A[4] := flows 
+# A := Array([[seq( e[1], e in E)],[seq( e[2], e in E)],[seq(e[3],e in E)], [0$nops(E)]]);
+A := Array([
+    [seq( e[1], e in E), seq( e[1], f in F)],
+    [seq( e[2], e in E), seq( e[2], f in F)],
+    [seq(e[3],e in E), 0$nops(F)], [0$(nops(E)+nops(F))]]);  # assumes no double edges, builds a reversed direction edge for each arc with new capacity 0
+
+# determine which edges *could* handle more flow 
+Eavail := {}:
+for i from 1 to nops(EAll) do 
+    if A[3,i] > A[4,i] then     
+        Eavail := Eavail union {[ A[1,i], A[2,i] ]}:
+    fi:
+od:
+
+# find first s-t path to start loop
+P := pathFinder2(V,Eavail,s,t):
+
+# while an s-t path exists, augment flow 
+while P<>[] do 
+
+    # determine how much to augment by
+    eps := infinity:
+    for i from 1 to nops(P)-1 do  
+        u := P[i]:
+        v := P[i+1]:
+
+        member([u,v],EAll,'eind'):
+        e := A[3,eind] - A[4,eind] :
+
+        if e < eps then 
+            eps := e:       # keep track of minimum 
+        fi:
+    od:
+
+    # augment!!
+    for i from 1 to nops(P)-1 do  
+        u := P[i]:
+        v := P[i+1]:
+
+        member([u,v],EAll,'eind'):
+        # increase flow in forward edge
+        A[4,eind] := A[4,eind] + eps:
+        
+    od:
+
+    # redefine residuals by considering backwards edges
+    for i from 1 to nops(F) do 
+        f := [F[i][2],F[i][1]]:     # forwards edge 
+   
+        member(f,EAll,'j'):
+        A[4,j] := A[4,j] - A[4,nops(E)+i]:
+
+        if A[4,j] < 0 then 
+            error `Negative flow`:
+        fi:
+
+        A[4,nops(E)+i] := 0:      # backwards flow was absorbed into forward flow
+        A[3,nops(E)+i] := A[4,j]:     # backwards capacity is whatever the forward flow is 
+    od:
+
+    # update Eavail 
+    Eavail := {}:
+    for i from 1 to nops(E) do 
+        if A[3,i] > A[4,i] then 
+            Eavail := Eavail union { [ A[1,i], A[2,i] ] }:
+        fi:
+    od:
+    
+    P := pathFinder2(V,Eavail,s,t):  # try to find new path for next loop iter
+od:
+
+# calculate total flow out of s 
+member(s,V,'sind'):
+sNeis := Hout[sind]:
+f := 0:
+for v in sNeis do 
+    member([s,v],EAll,'eind'):
+    f := f + A[4,eind]:
+od:
+
+# return total flow and edges with flow information
+[f, {seq( [A[1,i],A[2,i],A[4,i]] , i=1..nops(E)) }]:
+end:
+
+
+## helper: given vertex and edge set, find s-t path using DFS
+
+pathFinder2 := proc(V,E,s,t) local ord,P,v,u,i,F:
+ord := DFST(V,E,s,t,dir): # DFS considers *all* vertices, doesn't just stop after reaching t. can be made more efficient 
+
+if not member(t,ord) then   # no s-t path found
+    return []:
+fi:
+
+P := [t]:
+for i from 2 to nops(ord) do 
+    u := ord[-i]:
+    v := P[1]:
+
+    if member([u,v],E) then 
+        P := [u,op(P)]:
+    fi:
+od:
+
+if P[1]<>s then 
+    error `Internal s-t path finder error.`:
+fi:
+
+P:
+end:
+
+
+
+### modified from AGT.txt, a package written by dr z and students in the spring 2025 iteration of 640:640 at rutgers university
+#
+## random graph generator 
+# inputs a pos. integer n and outputs a random graph on {1, ..., n} where each edge {i,j} is picked independently with probability p.
+
+RG:=proc(V,p) local E,i,j,n,ra:
+n := nops(V):
+E:={}:
+
+ra := rand(1..denom(p)):
+
+for i from 1 to n do
+    for j from i+1 to n do
+        if ra() = 1 then
+            E:=E union {{V[i],V[j]}}:
+        fi:
+    od:
+od:
+[V,E]:
+end:
+
+
+## helper: connected component constructor
+# inspired by same named proc from AGT.txt, modifications by aurora hiveley
+
+CC := proc(V,E) local N,C,U,uu,vv,e,S,C1,C2,C3,j,uind,vind: 
+N := edgesToNeis(V, {seq( {e[1],e[2]}, e in E )}): # strip edge weights to determine neighbors 
+C := {}:
+U := V:     # copy for editting, will be unused vertices
+
+while nops(U)<>0 do 
+    vv := U[1]: 
+
+    C1 := {vv}: 
+    member(vv,V,'vind'):
+    C2 := {vv} union N[vind]:  # 
+    while C1<>C2 do        # while there are still neighbors 
+        # set of neighbor indices 
+        S := {}:
+        for uu in C2 do 
+            member(uu,V,'uind'):
+            S := S union {uind}:
+        od:
+
+        C3 := C2 union { seq( op(N[j]), j in S ) }:
+
+        C1 := C2:
+        C2 := C3:
+    od:
+
+    C := C union {C1}:
+    U := U minus C1:
+od:
+
+C:
+end:
+
+
+# random connected graph
+# for input vertex set V, each edge appears with probability p
+# extra edges may be added to make the resulting graph connected 
+
+RCG := proc(V,p) local E,C,u,v:
+E := RG(V,p)[2]:
+C := CC(V,E):
+
+while nops(C)<>1 do 
+    # pick two random vertices from different components of G, add an edge between them 
+    v := C[1][rand(1..nops(C[1]))()]:
+    u := C[2][rand(1..nops(C[2]))()]:
+
+    E := E union {{u,v}}:
+    C := CC(V,E):
+od:
+
+[V,E]:
+end:
+
+
+
+# random connected network
+# for input vertex set V (including source s and sink t), each arc appears with probability p
+# and has capacity at most c. extra edges may be added to make the resulting graph connected 
+
+RCN := proc(V,p,c) local E,e,A,a,B,b,AA,v,ord:
+
+if not member(s,V) or not member(t,V) then 
+    error `Missing source and/or sink vertex in V.`:
+fi:
+
+E := RCG(V minus {s,t},p)[2]: # build random connected *graph* on all vertices except s,t
+A := {}:
+
+# assign directions to edges with 50/50 probability 
+for e in E do 
+    if rand(1..2)() = 1 then 
+        A := A union {[e[1],e[2]]}:
+    else 
+        A := A union {[e[2],e[1]]}:
+    fi:
+od:
+
+B := A:
+# add edges out of s and into t with probability p 
+for v in V minus {s,t} do 
+    if rand(1..denom(p))() = 1 then 
+        B := B union {[s,v]}:
+    fi:
+
+    if rand(1..denom(p))() = 1 then 
+        B := B union {[v,t]}:
+    fi:
+od:
+
+
+# check if directed s-t path exists (??)
+ord := DFST(V,B,s,t,dir):
+# probably inefficient, may take a while, make sure that it terminates (should since card(A) is finite)
+while not member(t,ord) do
+    # flip direction of a random edge 
+    a := A[rand(1..nops(A))()]:
+    A := A minus {a} union {[a[2],a[1]]}:
+    B := B minus {a} union {[a[2],a[1]]}:
+    ord := DFST(V,B,s,t,dir):
+od:
+
+# add capacities 
+AA := {}:
+for b in B do 
+    AA := AA union {[op(b),rand(1..c)()]}:
+od:
+
+[V,AA]:
+end:
+
+
