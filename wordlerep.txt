@@ -1,0 +1,629 @@
+# wordle, repetition analysis
+# written by aurora hiveley, rutgers university 
+# last updated 12/19/25 
+
+read `wordle.txt`: # import package from Hiveley (2025)
+
+print(`This is wordlerep.txt, a Maple package by Aurora Hiveley (Rutgers University)`):
+print(`For a list of the functions, type Help2(); for help with a specific function type: Help(FunctionName);`):
+
+
+Help2:=proc(): 
+
+### ALL FUNCTIONS
+
+if nargs=0 then 
+print(`ALL FUNCTIONS:`):
+print(`allLk(setP,s), allRk(setP,s), construct(p,dir), constructgen(p), displacement(p), Inv(p), isStrat(s), ldisplacement(p), `):
+print(`Lk(setP,s,k), modHelper(n,m), repGuess(setP,s,boolSee := false), restPerm(gamma,locks,skips,dir), Rk(setP,s,k), `):
+print(`whenCorrect(setP,s), whenRep(setP,s), whenRepEntry(setP,s,e), whoRep(s)`):
+
+### REPEATED GUESS ANALYSIS
+
+elif nargs=1 and args[1]=repGuess then
+print(`repGuess(setP,s,boolSee = false): for a strategy s and a permutation setP, outputs boolean representing whether information is duplicated`):
+print(`when guesser(setP,s,boolSee) is run. Note that duplicated information consists of an incorrect entry being guessed in the same position more than once,`):
+print(`inputs: permutation of length n to be guessed setP, strategy s of length n, and optional boolSee (default false) for whether to display indices and guesses after each iteration`):
+print(`outputs: boolean for if guesser guesses the same incorrect entry more than once` ):
+print(`example: repGuess([2,3,1,5,4],KS(5)): repGuess([2,3,1,5,4],KSInd(5,[2,4,5,3,1])):`):
+
+elif nargs=1 and args[1]=whoRep then
+print(`whoRep(s): returns the set of permutations which, when acting as setP, have repeated incorrect information for a game of permutation wordle`):
+print(`using the strategy s.`):
+print(`input: strategy s`):
+print(`output: set of permutations which repeat bad information`):
+print(`example: whoRep(KSInd(4,[4,1,2,3]))`):
+
+elif nargs=1 and args[1]=whenRep then
+print(`whenRep(setP,s): returns the number of guesses before information is repeated in a game of permutation wordle using the strategy s with secret permutation setP`):
+print(`input: secret permutation setP, strategy s`):
+print(`output: integer representing guess number when bad information is repeated. Returns 0 if game does not repeat`):
+print(`example: whenRep([3,4,2,1],KSInd(4,[4,1,2,3])) and can verify with guesser([3,4,2,1],KSInd(4,[4,1,2,3]), true)`):
+
+elif nargs=1 and args[1]=whenRepEntry then
+print(`whenRep(setP,s,e): returns the number of guesses before the entry e is guessed in the same incorrect location as on a previous guess`):
+print(`in a game of permutation wordle using the strategy s with secret permutation setP.`):
+print(`input: secret permutation setP, strategy s, entry e between 1 and n`):
+print(`output: integer representing guess number when bad information is repeated`):
+print(`example: whenRep([3,4,2,1],KSInd(4,[4,1,2,3]),2) and can verify with guesser([3,4,2,1],KSInd(4,[4,1,2,3]), true)`):
+
+elif nargs=1 and args[1]=whenCorrect then
+print(`whenCorrect(setP,s): returns the number of guesses before an index is correct in a game of permutation wordle using the strategy s with secret permutation setP`):
+print(`input: secret permutation setP, strategy s`):
+print(`output: integer representing guess number when the first index is correct`):
+print(`example: whenCorrect([1,3,4,2],KS(4)); whenCorrect([3,4,1,2], KS(4));`):
+
+
+### CONSTRUCTORS 
+
+elif nargs=1 and args[1]=construct then
+print(`construct(p,dir): outputs a permutation which, when used as setP in a game of permutation wordle,`):
+print(`will repeat incorrect information when using the inductive strategy which cyclic shifts to dir (right or left) using S[n] = p`):
+print(`input: permutation p corresponding to S[n] for an inductive strategy and dir (left or right) for direction of cyclic shift of S[1]..S[n-1]`):
+print(`output: permutation of length n = nops(p)`):
+print(`example: construct([2,4,1,3],right) and can confirm with guesser(construct([2,4,1,3]), KSInd(4,[2,4,1,3]), true) `):
+
+elif nargs=1 and args[1]=constructgen then
+print(`constructgen(s): for a strategy s, outputs a permutation which, when used as setP in a game of permutation wordle,`):
+print(`will repeat incorrect information when using the strategy s (an offending permutation)`):
+print(`input: strategy s`):
+print(`output: permutation of length n = nops(s)`):
+print(`example: constructgen([[1],[2,1],[2,3,1],[4,3,1,2],[3,5,2,1,4]]);`):
+
+elif nargs=1 and args[1]=displacement then
+print(`displacement(p): for permutation p, returns the list of integers such that L[i] is the distance`): 
+print(`(counting leftward from position i) between position i and the entry i`):
+print(`input: permutation p`):
+print(`output: list L such that L[i] is the distance between i in p and the index i`):
+print(`example: displacement([2,3,4,1]); displacement([4,2,1,3]);`):
+
+elif nargs=1 and args[1]=ldisplacement then
+print(`ldisplacement(p): for permutation p, returns the list of integers such that L[i] is the distance`): 
+print(`(counting rightward from position i) between position i and the entry i`):
+print(`input: permutation p`):
+print(`output: list L such that L[i] is the distance between index i and i in p`):
+print(`example: ldisplacement([2,3,4,1]); ldisplacement([4,2,1,3]);`):
+
+elif nargs=1 and args[1]=restPerm then
+print(`restPerm(gamma,locks,skips,dir): for a guess gamma, generates another guess according to a subset of correct entries`):
+print(`and a number of times that the rest of the elements are right shifted to the direction dir.`): 
+print(`Intended to act as a helper function for construct(p)`):
+print(`input: a guess gamma (usually second guess gamma_2), indices of locked entries, number of skips/shifts for rest of entries,`):
+print(`and direction dir (either left or right) that those entries are shfifted.`):
+print(`output: the resulting permutation that has those locked entries and all other entries shifted "skips" many times `):
+
+elif nargs=1 and args[1]=isStrat then
+print(`isStrat(s): checks whether a strategy is legitimate, i.e. formatted properly `):
+print(`inputs: strategy s formatted as a list of lists`):
+print(`outputs: error message if not properly formatted, else no output`):
+print(`example: isStrat([[1],[2,1],[2,3,1]]); isStrat([[1],[2,1],[2,3,2]]); isStrat([[1],[2,1,3],[2,3,1]]);`):
+
+
+### RIGHT AND LEFT SETS  
+
+elif nargs=1 and args[1]=Rk then
+print(`Rk(setP,s,k): the set Rk of entries of gamma_k that are placed further right in gamma_k than in setP `):
+print(`input: secret permutation setP, strategy s used to generate k guesses, and the guess number k`):
+print(`output: the set Rk. note that if empty set is returned, game has ended in k or fewer guesses`):
+print(`example: Rk([2,3,5,1,4],KS(4),2); Rk([2,3,5,1,4],KSL(4),2);`):
+
+elif nargs=1 and args[1]=Lk then
+print(`Lk(setP,s,k): the set Lk of entries of gamma_k that are placed further left in gamma_k than in setP `):
+print(`input: secret permutation setP, strategy s used to generate k guesses, and the guess number k`):
+print(`output: the set Lk. note that if empty set is returned, game has ended in k or fewer guesses`):
+print(`example: Lk([2,3,5,1,4],KS(4),2); Lk([2,3,5,1,4],KSL(4),2);`):
+
+elif nargs=1 and args[1]=allRk then
+print(`allRk(setP,s): the list of all sets Rk for k from 1 to r-1 where r is the number of turns needed to end game`):
+print(`in a game with secret permutation setP and strategy s`):
+print(`input: secret permutation setP and strategy s`):
+print(`output: list of all sets Rk in a game`):
+print(`example: allRk([2,3,4,1],KS(4)):`):
+
+elif nargs=1 and args[1]=allLk then
+print(`allLk(setP,s): the list of all sets Lk for k from 1 to r-1 where r is the number of turns needed to end game`):
+print(`in a game with secret permutation setP and strategy s`):
+print(`input: secret permutation setP and strategy s`):
+print(`output: list of all sets Rk in a game`):
+print(`example: allLk([2,3,4,1],KS(4)):`):
+
+
+fi:
+end:
+
+
+
+## REPEATED GUESS CHECKER 
+#
+# input setP, strategy s, and optional boolean to view progress of guesses 
+# output boolean for whether guesses duplicate information (i.e. the same incorrect entry is guessed in a position more than once)
+
+repGuess := proc(setP, s, boolSee := false) local p,q,P,i,loc,repLoc,corrLoc:
+# turns := 1:
+p := [seq(i, i=1..nops(setP))]:
+P := {p}: # set of already seen guesses
+
+if type(s,list) then 
+    stratChecker(setP,s):
+fi:
+
+while not p = setP do
+    p := nextGuess(setP,p,s,boolSee):
+
+    if boolSee = true then 
+        print(p);
+    fi:
+
+    # looping case: 
+    if p in P and not s = random then       # note that a random strategy allows us to break out of a guessing "loop"
+        # turns := infinity:
+        RETURN(true):
+        # p := setP: # causes break out of while loop
+    fi:
+
+    corrLoc := convert(permInd(p,setP)[1],set):
+
+    for q in P do 
+        loc := permInd(p,q):    # compare indices of current guess and previous guesses 
+        repLoc := convert(loc[1],set):
+
+        if nops( repLoc minus corrLoc )<>0 then     # repeated indices setminus indices that were found to be correct  
+            RETURN(true):
+        fi:
+    od:
+
+    P := P union {p}:
+    # turns ++ :
+od:
+
+# return turns:
+return false:
+end:
+
+
+## REPEATED GUESS IDENTIFIER 
+# 
+# input strategy s
+# outputs set of permutations for which the strategy repeats incorrect information
+# i.e. the set of permutations p for which repGuess(p,s) returns true
+
+whoRep := proc(s) local n,p,R:
+n := nops(s):
+
+p := [seq(1..n)]: # initialize trivial permutation 
+R := {}: # set of permutations with repeats 
+
+while p <> FAIL do 
+    if repGuess(p,s) then 
+        R := R union {p}:
+    fi:
+
+    p := nextperm(p):
+od:
+
+R:
+end:
+
+
+## WHEN DOES THE REPEATED GUESS OCCUR  
+# 
+# input set permutation setP and strategy s 
+# outputs the guess number where repeated bad information happens in a game using strategy s and set permutation setP 
+
+whenRep := proc(setP,s) local p,q,P,i,loc,repLoc,corrLoc,turns:
+turns := 1:
+p := [seq(i, i=1..nops(setP))]:
+P := {p}: # set of already seen guesses
+
+if type(s,list) then 
+    stratChecker(setP,s):
+fi:
+
+while not p = setP do
+    p := nextGuess(setP,p,s,boolSee):
+    turns++:
+
+    if boolSee = true then 
+        print(p);
+    fi:
+
+    # looping case: 
+    if p in P and not s = random then       # note that a random strategy allows us to break out of a guessing "loop"
+        RETURN(true): 
+    fi:
+
+    corrLoc := convert(permInd(p,setP)[1],set):
+
+    for q in P do 
+        loc := permInd(p,q):    # compare indices of current guess and previous guesses 
+        repLoc := convert(loc[1],set):
+
+        if nops( repLoc minus corrLoc )<>0 then     # repeated indices setminus indices that were found to be correct  
+            RETURN(turns):
+        fi:
+    od:
+
+    P := P union {p}:
+od:
+
+0:  # never repeats
+end:
+
+
+## WHEN IS ENTRY REPEATED 
+# 
+# input set permutation setP, strategy s, and permutation entry e 
+# outputs the guess number where entry e is guessed in the same incorrect location as on a previous guess 
+# in a game using strategy s and set permutation setP 
+
+whenRepEntry := proc(setP,s,e) local p,q,P,i,loc,repLoc,corrLoc,turns,repSet:
+turns := 1:
+p := [seq(i, i=1..nops(setP))]:
+P := {p}: # set of already seen guesses
+
+if type(s,list) then 
+    stratChecker(setP,s):
+fi:
+
+if not 1<=e or not e<=nops(setP) then 
+    error(`Entry e is not between 1 and n`):
+fi:
+
+while not p = setP do
+    p := nextGuess(setP,p,s,boolSee):
+    turns++:
+
+    if boolSee = true then 
+        print(p);
+    fi:
+
+    # looping case: 
+    if p in P and not s = random then       # note that a random strategy allows us to break out of a guessing "loop"
+        RETURN(true): # change this later?
+    fi:
+
+    corrLoc := convert(permInd(p,setP)[1],set):
+
+    for q in P do 
+        loc := permInd(p,q):    # compare indices of current guess and previous guesses 
+        repLoc := convert(loc[1],set):
+
+        repSet := repLoc minus corrLoc:     # set of repeated incorrect indices (repeated indices setminus indices that were found to be correct )
+
+        if member(e,repSet) then     
+            RETURN(turns):
+        fi:
+    od:
+
+    P := P union {p}:
+od:
+
+if p = setP then 
+    return(0):
+fi:
+end:
+
+
+
+## WHEN FIRST CORRECT ENTRY 
+# 
+# input strategy s and secret permutation setP 
+# output guess number when an entry is first guessed in correct position
+# note: important for inductive strategies, indicates when induction/cyclic shifting takes over 
+
+whenCorrect := proc(setP,s) local p,q,P,i,loc,repLoc,corrLoc,turns:
+turns := 1:
+p := [seq(i, i=1..nops(setP))]:
+P := {p}: # set of already seen guesses
+
+if type(s,list) then 
+    stratChecker(setP,s):
+fi:
+
+while not p = setP do
+    if convert(permInd(p,setP)[1],set) <> {} then           # correct indices nonempty
+        RETURN(turns):
+    fi:
+
+    # go to next guess 
+    p := nextGuess(setP,p,s,boolSee):
+    turns++: 
+od:
+
+turns:  # first correct entry is final guess
+end:
+
+
+## DISPLACEMENT VECTOR 
+# 
+# inputs permutation p 
+# returns the list/vector such that L[i] is the distance between i in p and the index i,
+# calculated leftward from the index i 
+# in other words, how many times do we have to right shift before entry i is a fixed point/returns "home"
+
+displacement := proc(p) local n,L,e,i:
+n := nops(p):
+L :=[0$n]:
+
+for i from 1 to n do 
+    e := p[i]:  # entry in position i 
+    L[i] := (e-i) mod n:
+od:
+
+L:
+end:
+
+
+## (LEFT) DISPLACEMENT VECTOR 
+# 
+# inputs permutation p 
+# returns the list/vector such that L[i] is the distance between i in p and the index i,
+# calculated rightward from the index i 
+# in other words, how many times do we have to right shift before entry i is a fixed point/returns "home"
+
+ldisplacement := proc(p) local n,L,e,i:
+n := nops(p):
+L :=[0$n]:
+
+for i from 1 to n do 
+    e := p[i]:  # entry in position i 
+    L[i] := (i-e) mod n:
+od:
+
+L:
+end:
+
+
+## MODULO ARITHMETIC HELPER FUNCTION 
+#
+# returns m mod n, but where n mod n = n rather than 0
+# AURORA NOTE: SHOULD THIS JUST BE (i mod n) + k instead of modHelper(i+k,n) ???
+
+modHelper := proc(m,n): 
+if m mod n = 0 then 
+    return(n):
+else
+    return(m mod n):
+fi:
+end:
+
+
+# copied from excC.txt, written by dr. z 
+# returns the inverse of a permutation pi 
+
+#Inv(p): the inverse of the permutation p. Try: Inv([2,4,1,3]);
+Inv:=proc(p) local n,T,i:
+n:=nops(p):
+for i from 1 to n do
+ T[p[i]]:=i:
+od:
+[seq(T[i],i=1..n)]:
+end:
+
+
+## REST OF PERMUTATION CONSTRUCTOR
+# helper function for construct
+#  
+# inputs a guess gamma (usually second guess gamma_2), indices of locked entries, number of skips/shifts after this guess, 
+# and direction of shifting other entries (either left or right)
+# outputs resulting permutation that has those locked entries and shifts all other entries skips many times 
+
+restPerm := proc(gamma,locks,skips,dir) local p,j,l,n,m,shiftLoc:
+n := nops(gamma):
+p := [0$n]:
+
+# lock in designated entries
+for l in locks do
+    p[l] := gamma[l]:
+od:
+
+## generate rest of perm using number of skips and appropriate direction
+shiftLoc := convert( {seq(1..n)} minus {op(locks)}, list ):
+m := nops(gamma)-nops(locks): # number of entries to shift 
+
+for j from 1 to nops(shiftLoc) do 
+    if dir = right then 
+        p[ shiftLoc[modHelper(j+skips,m)] ] := gamma[ shiftLoc[j] ]:
+    elif dir = left then 
+        p[ shiftLoc[modHelper(j-skips,m)] ] := gamma[ shiftLoc[j] ]:
+    else
+        error(`Direction of shift not l or r, internal error.`):
+    fi:
+od:
+
+return p:
+end:
+
+
+
+## GENERAL CONSTRUCTOR 
+# 
+# input permutation p corresponding to S[n] for an inductive strategy 
+# and dir the direction that the components S[1] through S[n-1] cyclic shift (left or right)
+# output a permutation r such that a game of permutation wordle with setP = r, 
+# using strategy inductive strategy which cyclic shifts to dir with S[n] = p, repeats incorrect information 
+
+construct := proc(p,dir) local n,q,L,LL,l,m,r,i,j:
+n := nops(p):
+q := Inv(p): 
+
+if dir = right then 
+    L := displacement(q):
+elif dir = left then 
+    L := ldisplacement(q):
+else 
+    error(`Direction of shift not l or r, internal error.`):
+fi:
+
+## case testing 
+
+if member(2,L) then 
+    # case 1: L contains at least one 2
+    # loop over entries and catch every 2 that might cause a problem 
+    l := {}: # set of locks 
+    LL := L: # make copy for editting 
+
+    # case of derangement (13)(24), must be handled specially 
+    if convert(L,set)={2} and nops(L) = 4 then 
+        RETURN([2,1,4,3]):
+    fi:
+
+    # catch the case of L = [2,....,2] where all middle entries are non-2's 
+    if L[1]=2 and L[-1]=2 and not member(2,L[2..-2]) then 
+        LL[1] := 0:
+        LL[-1] := 0:
+
+        if dir = right then 
+            l := {1}:
+        elif dir = left then 
+            l := {n}:
+        fi:
+    fi:
+
+    while member(2,LL) and nops(l) < n-3 do 
+        member(2,LL,'i'): # i is the first index of 2 in L, i.e. the index of one of the entries of q whose displacement is 2
+
+        if dir = right then 
+            l := l union { modHelper(i+1,n) }:
+            LL[i] := 0:
+            LL[modHelper(i+1,n)] := 0:
+        
+        elif dir = left then 
+        # cannot add zeros to l 
+            l := l union { modHelper(i-1,n) }:
+            LL[i] := 0:
+            LL[modHelper(i-1,n)] := 0:
+            LL[modHelper(i+1,n)] := 0:
+
+        fi:
+    od:
+
+    r := restPerm(q,convert(l,list),2,dir):
+    
+
+# case 2: L contains no 2's
+else
+    # we want the smallest element in displacement, but must be bigger than 1 
+    # so we replace all 1's with infinity, then take minimum 
+
+    LL := L: # copy for editting
+    for j from 1 to nops(L) do 
+        if L[j] = 1 then 
+            LL[j] := infinity:
+        fi:
+    od:
+
+    m := min(LL):    # smallest element in displacement, must be bigger than 1
+
+    # if displacement vector is all 1's, then component is shifting opp. direction from rest of strategy 
+    # i.e., KSL or KSR 
+    if m = infinity then
+        if dir = right then 
+            return([2,n,1,seq(3..n-1)])
+        elif dir = left then 
+            return([n,seq(3..n-1),1,2]):
+        fi:
+
+    # strategy component is derangement of 2-cycles 
+    elif m = n-1 then 
+        RETURN([seq(3..n),1,2]):
+    fi:
+
+    member(m,L,'i'):    # i is the first index of m in L
+
+    if dir = right then 
+        l := [seq( modHelper(i+j,n) , j=1..m-1)]:
+    elif dir = left then 
+        l := [seq( modHelper(i-j,n) , j=1..m-1)]:
+    fi:
+
+    r := restPerm(q,convert(l,list),2,dir):
+fi:
+
+r:
+end:
+
+
+
+## GENERAL OFFENDING PERM CONSTRUCTOR 
+# 
+# input strategy (not necessarily inductive!)
+# outputs offending permutation constructed by identifying inductive sub-strategy of length k on which to use construct(S[k])
+# and fixing the n-k points at the end of the offending permutation 
+
+constructgen := proc(s) local n,k,i,dir:
+n := nops(s):
+
+# error checking 
+isStrat(s):
+
+# check if strategy needs special handling, i.e. strategy is KS, either right or left 
+if s = KS(n) or s = [[1], seq( [ k,seq(1..k-1) ], k=2..n )] then 
+    RETURN({}):
+fi: 
+
+
+# check if s[3] is left or right shifting 
+if s[3] = [2,3,1] then 
+    dir := right:
+elif s[3] = [3,1,2] then 
+    dir := left:
+fi:
+
+k := 0: # initialize k for the while loop 
+i := 3: # initialize the strategy component that we are checking for agreement with CS 
+
+# identify the smallest component which disagrees with CS
+if dir = right then 
+    while k = 0 and i <=n do 
+        if s[i] <> [seq(2..i),1] then 
+            k := i: 
+        fi:
+
+        i++:
+    od:
+
+elif dir = left then 
+    while k = 0 and i <=n do 
+        if s[i] <> [i,seq(1..i-1)] then 
+            k := i: 
+        fi:
+
+        i++:
+    od:
+
+else 
+    error(`Direction of shift not left or right, internal error.`):
+fi:
+
+if i>n and k=0 then 
+    error(`No disagreeing component found.`):
+fi:
+
+[op(construct(s[k], dir)),seq(k+1..n)]:
+end:
+
+
+
+## STRATEGY CHECKER 
+#
+# inputs strategy 
+# outputs an error message if incorrectly formatted or if component is not a derangement 
+
+isStrat := proc(s) local i,n:
+n := nops(s):
+
+for i from 1 to n do 
+    if nops(s[i])<>i then 
+        error(`Strategy component `,i, ` has improper length`):
+    elif not isPerm(s[i]) then 
+        error(`Strategy component `,i, ` is not a permutation`):
+    elif not isDer(s[i]) and i>1 then 
+        error(`Strategy component `,i, ` is not a derangement`):
+    fi:
+od:
+
+end:
+
+
+

@@ -1,5 +1,5 @@
 ### written by: aurora hiveley, rutgers university
-### last updated: 6/29/25
+### last updated: 11/25/25
 
 print(`This is wordle.txt, a Maple package by Aurora Hiveley (Rutgers University)`):
 print(`For a list of the functions, type Help(); for help with a specific function type: Help(FunctionName);`):
@@ -547,7 +547,7 @@ n := nops(p):
 
 for i from 1 to n do
     if not member(i,p) then
-        false:
+        RETURN(false):
     fi:
 od:
 
@@ -659,7 +659,7 @@ n := nops(p):
 
 for i from 1 to n do 
     if p[i] = i then 
-        return false:
+        RETURN(false):
     fi:
 od:
 
@@ -1350,7 +1350,7 @@ HelpThm:=proc():
 if nargs=0 then 
 
 print(`ALL VERIFICATION FUNCTIONS:`):
-print(`prop31(n), thm41(n), conj42(n), thm43(n), thm44(n), thm46(n), thm47(n), thm48(n), thm410(n), thm411(n)`):
+print(`prop31(n), thm41(n), conj42(n), thm43(n), thm44(n), thm45(n), thm46(n), thm47(n), thm49(n), thm410(n)`):
 
 ## GUESSERS HELP
 
@@ -1372,14 +1372,14 @@ print(`example: thm41(4) `):
 elif nargs=1 and args[1]=conj42 then
 print(`conj42(n): verifies Conjecture 4.2`):
 print(`inputs: n`):
-print(`outputs: set of {[x^3](f_{CS}(x)), [[x^3](f_S(x)) for all cyclic strategies S ]}`):
+print(`outputs: set of {C_3(f_{CS}(x)), [C_3(f_S(x)) for all cyclic strategies S ]}`):
 print(`example: conj42(4) `):
 
 
 elif nargs=1 and args[1]=thm43 then
 print(`thm43(n): verifies Theorem 4.3`):
 print(`inputs: n`):
-print(`outputs: set of {[x^3](f_{CS}(x)), [[x^3](f_S(x)) for all inductive strategies S ]}`):
+print(`outputs: set of {C_3(f_{CS}(x)), [C_3(f_S(x)) for all inductive strategies S ]}`):
 print(`example: thm43(5) `):
 
 
@@ -1391,42 +1391,42 @@ print(`the number of permutations guessed in exactly 3 guesses such that the fir
 print(`example: thm44(5) `):
 
 
-elif nargs=1 and args[1]=thm46 then
-print(`thm46(n): verifies Theorem 4.6`):
+elif nargs=1 and args[1]=thm45 then
+print(`thm45(n): verifies Theorem 4.5`):
 print(`inputs: n`):
 print(`outputs: set containing the counts of permutations guessed in exactly 3 guesses`):
 print(`whose first correct entry is obtained on guess 3 across all cyclic strategies of length n. `):
-print(`example: thm46(5) `):
+print(`example: thm45(5) `):
+
+
+elif nargs=1 and args[1]=thm46 then
+print(`thm45(n): verifies Theorem 4.6`):
+print(`inputs: n`):
+print(`outputs: boolean for whether |{pi : rho_CS (pi) = 2}| = 2^n - 2*n - 2`):
+print(`example: thm46(4) `):
 
 
 elif nargs=1 and args[1]=thm47 then
 print(`thm47(n): verifies Theorem 4.7`):
 print(`inputs: n`):
-print(`outputs: boolean for whether |{pi : rho_CS (pi) = 2}| = 2^n - 2*n - 2`):
-print(`example: thm47(4) `):
-
-
-elif nargs=1 and args[1]=thm48 then
-print(`thm48(n): verifies Theorem 4.8`):
-print(`inputs: n`):
 print(`outputs: set {m,L} where L is the list containing, for all inductive strategies S,`): 
 print(`the number of permutations guessed in exactly 3 guesses such that the first correct entry is obtained on guess 2, `):
 print(`and m is the same for KS, specifically.`):
-print(`example: thm48(4) `):
+print(`example: thm47(4) `):
+
+
+elif nargs=1 and args[1]=thm49 then
+print(`thm49(n): verifies Theorem 4.9`):
+print(`inputs: n`):
+print(`outputs: boolean for whether |{pi : rho_CSL (pi) = 2}| = L_n - n - 1`):
+print(`example: thm49(5) `):
+
 
 
 elif nargs=1 and args[1]=thm410 then
 print(`thm410(n): verifies Theorem 4.10`):
 print(`inputs: n`):
-print(`outputs: boolean for whether |{pi : rho_CSL (pi) = 2}| = L_n - n - 1`):
-print(`example: thm410(5) `):
-
-
-
-elif nargs=1 and args[1]=thm411 then
-print(`thm411(n): verifies Theorem 4.11`):
-print(`inputs: n`):
-print(`outputs: set of {[x^3](f_{CSL}(x)), [[x^3](f_S(x)) for all inductive strategies S ]}`):
+print(`outputs: set of {C_3(f_{CSL}(x)), [C_3(f_S(x)) for all inductive strategies S ]}`):
 print(`example: thm43(5) `):
 
 
@@ -1482,7 +1482,7 @@ end:
 
 
 # (experimental) verification of Conjecture 4.2 for input n
-# output is a list [m,C] where m = [x^3](f_CS(x)) 
+# output is a list [m,C] where m = C_3(f_CS(x)) 
 # and C is the set of all cubic coefficients for the generating functions of deranged strategies of length n 
 # we expect C to be a set of elements all smaller than m 
 
@@ -1508,7 +1508,7 @@ end:
 
 
 # verification of Theorem 4.3 for input n 
-# output is a set of {[x^3](f_{CS}(x)), [[x^3](f_S(x)) for all inductive strategies S ]}
+# output is a set of {C_3(f_{CS}(x)), [C_3(f_S(x)) for all inductive strategies S ]}
 # expecting the set {m, [list of numbers smaller than m]}
 
 thm43 := proc(n) local C,c,m,i:
@@ -1534,34 +1534,34 @@ end:
 
 
 
-# verification of Theorem 4.6 for input n 
+# verification of Theorem 4.5 for input n 
 # output is the set containing the counts of permutations guessed in exactly 3 guesses whose first correct entry 
 # is obtained on guess 3 across all cyclic strategies of length n. 
 # expecting the set {1}
 
-thm46 := proc(n) local C,c:
+thm45 := proc(n) local C,c:
 C := cyclicStrats(n):
 {seq(nops(kGuessesR(c,3,3)), c in C)}:
 end:
 
 
 
-# verification of Theorem 4.7 for input n 
+# verification of Theorem 4.6 for input n 
 # expecting a boolean "true"
 
-thm47 := proc(n) :
+thm46 := proc(n) :
 evalb(nops(kGuessesR(KS(n),3,2)) = 2^n - 2*n - 2);
 end:
 
 
 
-# verification of Theorem 4.8 for input n 
+# verification of Theorem 4.7 for input n 
 # output is set of {m, L} where L is the list containing, for all inductive strategies S, 
 # the number of permutations guessed in exactly 3 guesses such that the first correct entry is obtained on guess 2, 
 # and m is the same for KS, specifically. 
 # expecting m > l for all l in L
 
-thm48 := proc(n) local C,c,m,i:
+thm47 := proc(n) local C,c,m,i:
 C := cyclicStrats(n) minus {KS(n),[seq(  [i, seq(1..i-1)], i=1..n )]}:    # non-KS cyclic strategies
 m := nops(kGuessesR(KS(n),3,2)):
 {m,[seq( nops(kGuessesR(c,3,2)) , c in C)]}:
@@ -1569,23 +1569,23 @@ end:
 
 
 
-# verification of Theorem 4.10 for input n 
+# verification of Theorem 4.9 for input n 
 # expecting a boolean "true"
 
-thm410 := proc(n) local Ln:
+thm49 := proc(n) local Ln:
 Ln := fibonacci(n-1) + fibonacci(n+1): # nth Lucas number
 evalb(nops(kGuessesR(KSL(n),3,2)) = Ln - n - 1);
 end:
 
 
 
-# verification of Theorem 4.11
-# output is a set of {[x^3](f_{CSL}(x)), [[x^3](f_S(x)) for all cyclic strategies S ]}
+# verification of Theorem 4.10
+# output is a set of {C_3(f_{CSL}(x)), [C_3(f_S(x)) for all cyclic strategies S ]}
 # note that we removed both left and right shifting strategies from the comparison set, for obvious reasons. 
 # and furthermore this verification is trivial for n <= 3 since the only strategies of those lengths *are* cyclic shift.
 # expecting the set {m, [list of numbers larger than m]}
 
-thm411 := proc(n) local C,c,m,i:
+thm410 := proc(n) local C,c,m,i:
 C := cyclicStrats(n) minus {KSL(n), [seq(  [i, seq(1..i-1)], i=1..n-1 ), [seq(2..n),1]]}:    # non-KSL cyclic strategies
 m := coeff(gf(n,KSL(n),x),x,3):
 
