@@ -8,11 +8,14 @@
 
 :root {
   --color1: #67bc7d; /* Define a root variable for primary color */
-  --color1-2: #80c67f;
+  --color1-2: #99d199;
+  /* --color1-2: #80c67f; */
   --color2: #d4b2c7;
-  --color2-2: #dccbdb;
+  /* --color2-2: #dccbdb; */
+  --color2-2:#e3d5e2;
   --color3: #cfcdaa;
-  --color3-2: #e7e4bd;
+  /* --color3-2: #e7e4bd; */
+  --color3-2: #ece9ca;
   --color4: #529664; 	/*darker shade than color 1*/
   --color5: #3d704b; 	/*darkest of colors 1 and 4*/
 }
