@@ -132,7 +132,7 @@ input, select, textarea {
 
 	body, input, select, textarea {
 		/* text color is here! was 0.55 */ 
-		color: rgba(255, 255, 255, 0.55);
+		color: rgba(255, 255, 255, 0.75);
 		font-family: roboto, sans-serif; /*Arial, Helvetica, sans-serif;*/
 		font-size: 14pt;
 		font-weight: normal;
