@@ -18,6 +18,8 @@
   --color3-2: #f1efd7;
   --color4: #529664; 	/*darker shade than color 1*/
   --color5: #3d704b; 	/*darkest of colors 1 and 4*/
+  /* --color6: rgba(255, 255, 255, 0.55); /* text color */  
+  --color6: #D30000;
 }
 
 html, body, div, span, applet, object,
@@ -129,8 +131,7 @@ input, select, textarea {
 /* Type */
 
 	body, input, select, textarea {
-		/* color: rgba(255, 255, 255, 0.55); */
-		color: #D30000;
+		color: var(--color6);
 		font-family: roboto, sans-serif; /*Arial, Helvetica, sans-serif;*/
 		font-size: 14pt;
 		font-weight: normal;
@@ -1960,7 +1961,7 @@ input, select, textarea {
 		input[type="button"]:hover,
 		button:hover,
 		.button:hover {
-			border-color: rgba(255, 255, 255, 0.55) !important;
+			border-color: var(--color6) !important;
 		}
 
 			input[type="submit"]:hover:after,
@@ -2414,7 +2415,7 @@ input, select, textarea {
 		input[type="checkbox"] + label,
 		input[type="radio"] + label {
 			text-decoration: none;
-			color: rgba(255, 255, 255, 0.55);
+			color: --color6;
 			cursor: pointer;
 			display: inline-block;
 			font-size: 1em;
@@ -3433,7 +3434,7 @@ input, select, textarea {
 					}
 
 						#header > nav > ul > li a:hover {
-							color: rgba(255, 255, 255, 0.55);
+							color: --color6;
 						}
 
 						#header > nav > ul > li a.active {
@@ -3792,7 +3793,7 @@ input, select, textarea {
 			}
 
 			#sidebar nav a:hover {
-				color: rgba(255, 255, 255, 0.55);
+				color: --color6;
 			}
 
 			#sidebar nav a.active {
