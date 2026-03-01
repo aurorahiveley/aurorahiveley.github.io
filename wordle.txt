@@ -1350,84 +1350,84 @@ HelpThm:=proc():
 if nargs=0 then 
 
 print(`ALL VERIFICATION FUNCTIONS:`):
-print(`prop31(n), thm41(n), conj42(n), thm43(n), thm44(n), thm45(n), thm46(n), thm47(n), thm49(n), thm410(n)`):
+print(`prop4(n), thm5(n), conj6(n), thm7(n), thm10(n), thm11(n), thm12(n), thm13(n), thm14(n), thm15(n)`):
 
 ## GUESSERS HELP
 
-elif nargs=1 and args[1]=prop31 then
-print(`prop31(n): verifies Proposition 3.1`):
+elif nargs=1 and args[1]=prop4 then
+print(`prop4(n): verifies Proposition 4`):
 print(`inputs: n`):
 print(`outputs: set containing, for all derangement strategies, the average number of correct indices across all permutations of length n`):
-print(`example: prop31(5) `):
+print(`example: prop4(5) `):
 
 
-elif nargs=1 and args[1]=thm41 then
-print(`thm41(n): verifies Theorem 4.1`):
+elif nargs=1 and args[1]=thm5 then
+print(`thm5(n): verifies Theorem 5`):
 print(`inputs: n`):
 print(`outputs: a two element list [S1,S2] where S1 is the set of all linear coefficients for the generating functions`):
 print(`of strategies of length n, and S2 is the same for quadratic coefficients.`):
-print(`example: thm41(4) `):
+print(`example: thm5(4) `):
 
 
-elif nargs=1 and args[1]=conj42 then
-print(`conj42(n): verifies Conjecture 4.2`):
+elif nargs=1 and args[1]=conj6 then
+print(`conj6(n): verifies Conjecture 6`):
 print(`inputs: n`):
-print(`outputs: set of {C_3(f_{CS}(x)), [C_3(f_S(x)) for all cyclic strategies S ]}`):
-print(`example: conj42(4) `):
+print(`outputs: set of {[x^3](f_{CS}(x)), [[x^3](f_S(x)) for all cyclic strategies S ]}`):
+print(`example: conj6(4) `):
 
 
-elif nargs=1 and args[1]=thm43 then
-print(`thm43(n): verifies Theorem 4.3`):
+elif nargs=1 and args[1]=thm7 then
+print(`thm7(n): verifies Theorem 7`):
 print(`inputs: n`):
-print(`outputs: set of {C_3(f_{CS}(x)), [C_3(f_S(x)) for all inductive strategies S ]}`):
-print(`example: thm43(5) `):
+print(`outputs: set of {[x^3](f_{CS}(x)), [[x^3](f_S(x)) for all inductive strategies S ]}`):
+print(`example: thm7(5) `):
 
 
-elif nargs=1 and args[1]=thm44 then
-print(`thm44(n): verifies Theorem 4.4`):
+elif nargs=1 and args[1]=thm10 then
+print(`thm10(n): verifies Theorem 10`):
 print(`inputs: n`):
 print(`outputs: [1 - 2^(n+1) + 3^n + n^2/2 + (5/2)*n - n*2^n, S] where S is the set containing, for all inductive strategies S,`):
 print(`the number of permutations guessed in exactly 3 guesses such that the first correct entry is obtained on guess 1.`):
-print(`example: thm44(5) `):
+print(`example: thm10(5) `):
 
 
-elif nargs=1 and args[1]=thm45 then
-print(`thm45(n): verifies Theorem 4.5`):
+elif nargs=1 and args[1]=thm11 then
+print(`thm11(n): verifies Theorem 11`):
 print(`inputs: n`):
 print(`outputs: set containing the counts of permutations guessed in exactly 3 guesses`):
 print(`whose first correct entry is obtained on guess 3 across all cyclic strategies of length n. `):
-print(`example: thm45(5) `):
+print(`example: thm11(5) `):
 
 
-elif nargs=1 and args[1]=thm46 then
-print(`thm45(n): verifies Theorem 4.6`):
+elif nargs=1 and args[1]=thm12 then
+print(`thm12(n): verifies Theorem 12`):
 print(`inputs: n`):
 print(`outputs: boolean for whether |{pi : rho_CS (pi) = 2}| = 2^n - 2*n - 2`):
-print(`example: thm46(4) `):
+print(`example: thm12(4) `):
 
 
-elif nargs=1 and args[1]=thm47 then
-print(`thm47(n): verifies Theorem 4.7`):
+elif nargs=1 and args[1]=thm13 then
+print(`thm13(n): verifies Theorem 13`):
 print(`inputs: n`):
 print(`outputs: set {m,L} where L is the list containing, for all inductive strategies S,`): 
 print(`the number of permutations guessed in exactly 3 guesses such that the first correct entry is obtained on guess 2, `):
 print(`and m is the same for KS, specifically.`):
-print(`example: thm47(4) `):
+print(`example: thm13(4) `):
 
 
-elif nargs=1 and args[1]=thm49 then
-print(`thm49(n): verifies Theorem 4.9`):
+elif nargs=1 and args[1]=thm14 then
+print(`thm14(n): verifies Theorem 14`):
 print(`inputs: n`):
 print(`outputs: boolean for whether |{pi : rho_CSL (pi) = 2}| = L_n - n - 1`):
-print(`example: thm49(5) `):
+print(`example: thm14(5) `):
 
 
 
-elif nargs=1 and args[1]=thm410 then
-print(`thm410(n): verifies Theorem 4.10`):
+elif nargs=1 and args[1]=thm15 then
+print(`thm15(n): verifies Theorem 15`):
 print(`inputs: n`):
 print(`outputs: set of {C_3(f_{CSL}(x)), [C_3(f_S(x)) for all inductive strategies S ]}`):
-print(`example: thm43(5) `):
+print(`example: thm15(5) `):
 
 
 else
@@ -1482,7 +1482,7 @@ end:
 
 
 # (experimental) verification of Conjecture 6 for input n
-# output is a list [m,C] where m = C_3(f_CS(x)) 
+# output is a list [m,C] where m = [x^3](f_CS(x)) 
 # and C is the set of all cubic coefficients for the generating functions of deranged strategies of length n 
 # we expect C to be a set of elements all smaller than m 
 
@@ -1508,7 +1508,7 @@ end:
 
 
 # verification of Theorem 7 for input n 
-# output is a set of {C_3(f_{CS}(x)), [C_3(f_S(x)) for all inductive strategies S ]}
+# output is a set of {[x^3](f_{CS}(x)), [[x^3](f_S(x)) for all inductive strategies S ]}
 # expecting the set {m, [list of numbers smaller than m]}
 
 thm7 := proc(n) local C,c,m,i:
