@@ -1,0 +1,554 @@
+## aurora & lucy project 
+## experimental math spring 2026 
+
+# last updated: 5/4/26, by lucy
+
+#####################################################################
+##SYTSamplingProject.txt: Save this file as SYTSamplingProject.txt. #
+#To use it, stay in the                                             #
+##same directory, get into Maple (by typing: maple <Enter> )        #
+##and then type:  read `SYTSamplingProject.txt` : <Enter>           #
+##Then follow the instructions given there                          #
+##                                                                  #
+##Written by Aurora Hiveley and Lucy Martinez, Rutgers University   #
+#####################################################################
+
+ 
+#Created: April 2026. 
+
+print(`This is SYTSamplingProject.txt, a Maple package for the Experimental Math Class Final Project`):
+print(`taught by Dr. Doron Zeilberger.`):
+print(`-----------------------------`):
+
+lprint(``):
+print(`For a list of the procedures type Help(), for help with`):
+print(`a specific procedure, type Help(procedure_name)`):
+print(`-----------------------------`):
+print(``):
+
+print(`For a list of the properties that we study type HelpProperties()`):
+print(`for help with a specific procedure, type Help(procedure_name)`):
+print(`-----------------------------`):
+print(``):
+
+print(`For a list of the supporting procedures type HelpStats() or HelpSYT(), `):
+print(`for help with a specific procedure, type Help(procedure_name)`):
+print(`-----------------------------`):
+
+with(combinat):
+
+WhatsNew:=proc()
+if args=NULL then
+ print(`(1.) Changed procedure AvBackHook(T) to SumBackHook(T) `)
+fi:
+end:
+
+
+HelpStats:=proc()
+
+if args=NULL then
+ print(`The helper procedures for the statistics are: BSsamp, BSse, BSse1, GenerateManySYT`):
+ print(`Moms, SE, SMoms`):
+else
+ Help(args):
+fi:
+
+end:
+
+
+HelpProperties:=proc()
+
+if args=NULL then
+ print(`The properties procedures are: backHook, termCell, rowSum, colSum, SumBackHook`):
+else
+Help(args):
+fi:
+
+end:
+
+
+HelpSYT:=proc()
+if args=NULL then
+ print(`The supporting procedures are: Cells, HL, Hook, isSYT, NuSYT, OT, termCell`):
+else
+Help(args):
+fi:
+end:
+
+
+Help:=proc()
+
+if args=NULL then
+print(`The main procedures are: BSstat1, BSstat2, RandSYT`):
+
+elif nops([args])=1 and op(1,[args])=backHook then
+print(`backHook(T,c): Inputs a standard Young tableaux T and a cell c, outputs the number of entries in the backwards hook`):
+print(`of cell c = [a,b] in the tableau T which are smaller than entry [a,b] where`):
+print(`backhook is the column left of c and in same row or below. Try:`):
+print(`backHook([[1, 3, 4], [2, 5, 6], [7, 8, 9]],[1,2]);`):
+
+
+elif nops([args])=1 and op(1,[args])=SumBackHook then
+print(`SumBackHook(T,c): Inputs a standard Young tableaux T and outputs the sum of the lengths of the backwards hook`):
+print(`across all cells in the tableau T`):
+print(`SumBackHook([[1, 3, 4], [2, 5, 6], [7, 8, 9]]);`):
+
+
+elif nops([args])=1 and op(1,[args])=Av then
+print(`Av(L): Given a list L of numbers outputs the average. Try: `):
+print(`Av([3,5,3,1,2,5]);`):
+
+
+elif nops([args])=1 and op(1,[args])=BSsamp then
+print(`BSsamp(L): Inputs a list L and outputs ONE bootstrap sample from the data list L. Try:`):
+print(`BSsamp([3,5,3,1,2,5]);`):
+
+
+elif nops([args])=1 and op(1,[args])=BSse then
+print(`BSse(L,B): The Bootstrap estimate of the standard error of the data set L. Try: `):
+print(`BSse([3,5,3,1,2,5],100);`):
+
+
+elif nops([args])=1 and op(1,[args])=BSse1 then
+print(`BSse1(L,B,c,property): Given a list L (of standard Young tableaux),`):
+print(`an integer B, a cell c and a property from the list of HelpProperties()`):
+print(`outputs the Bootstrap estimate of the standard error of the data set L. Try:`):
+print(`BSse1([3,5,3,1,2,5],100);`):
+
+
+elif nops([args])=1 and op(1,[args])=BSstat then
+print(`Proc now deprecated. Try BSstat1 or BSstat2, instead.`):
+
+
+elif nops([args])=1 and op(1,[args])=BSstat1 then
+print(`BSstat1(L,B,c,property): Given a SYT shape L,`):
+print(`an integer B, a cell c and a property from the list of HelpProperties(),`):
+print(`outputs the average of the desired property for the B bootstrap samples. Try:`):
+print(`BSstat1([3,3,3],100,[1,3],backHook);`):
+
+
+elif nops([args])=1 and op(1,[args])=BSstat2 then
+print(`BSstat2(L,B,c,property): Given a SYT shape L, an integer B, a cell c, `):
+print(`and a property from the list of HelpProperties(),`):
+print(`outputs the average of the desired property for B random SYT/bootstrap samples. Try:`):
+print(`BSstat2([3,3,3],100,[1,3],backHook);`):
+
+
+elif nops([args])=1 and op(1,[args])=Cells then
+print(`Cells(L): The set of n (=sum(L)) cells [i,j] in the shape L. Try:`):
+print(`Cells([3,3,3]);`):
+
+
+elif nops([args])=1 and op(1,[args])=GenerateManySYT then
+print(`GenerateManySYT(L,K): Given a list of weakly increasing positive integers L,`):
+print(`an integer K, outputs K random standard Young tableaux using the Greene-Nijenhuis-Wilf algorithm. Try:`):
+print(`GenerateManySYT([3,3,3],10); `):
+
+
+elif nops([args])=1 and op(1,[args])=HL then
+print(`HL(L,c): The hook-length of cell c in the shape L. Try: `):
+print(`HL([3,3,3],[1,2]);`):
+
+
+elif nops([args])=1 and op(1,[args])=Hook then
+print(`Hook(L,c): The set of the cells in the hook corresponding to the cell c=[i,j]`):
+print(`i.e. the set of cells to the right and to the bottom of c. Try: `):
+print(`Hook([3,3,3],[1,2]);`):
+
+
+elif nops([args])=1 and op(1,[args])=isSYT then
+print(`isSYT(T): Inputs a lists of lists T and outputs true if it is a standard Young tableaux.`):
+
+
+elif nops([args])=1 and op(1,[args])=Moms then
+print(`Moms(f,x,r): Given a combinatorial generating function, first turns it into a probability generating function,`):
+print(`and then outputs the mean, standard deviation, followed by the 3rd through the r-th moment. Try:`):
+print(`Moms((x+1)^n,x,5);`):
+
+
+elif nops([args])=1 and op(1,[args])=NuSYT then
+print(`NuSYT(L): Outputs the number of standard Young tableaux of shape L`):
+print(`by implementing the Frame-Robinson-Thrall Hook Length Formula. Try:`):
+print(`NuSYT([3,3,3]);`):
+
+
+elif nops([args])=1 and op(1,[args])=OT then
+print(`OT(L): One trial of the Greene-Nijenhuis-Wilf algorithm to generate uniformly-at-random a standard Young tableaux of shape L. Try:`):
+print(`OT([3,3,3]);`):
+
+
+elif nops([args])=1 and op(1,[args])=RandSYT then
+print(`RandSYT(L): Outputs a random standard Young tableaux of shape L following the Greene-Nijenhuis-Wilf algorithm. Try:`):
+print(`RandSYT([3,3,3]);`):
+
+
+elif nops([args])=1 and op(1,[args])=SE then
+print(`SE(L): The classical textbook formula for the standard-error of the MEAN. Try: `):
+print(`SE([3,5,3,1,2,5]);`):
+
+
+elif nops([args])=1 and op(1,[args])=SMoms then
+print(`SMoms(f,x,r): Given a combinatorial generating function, first turns it into a probability generating function,`):
+print(`and then outputs the mean, standard deviation, followed by the SCALED 3rd through the r-th moment. Try:`):
+print(`SMoms((x+1)^n,x,5);`):
+
+
+elif nops([args])=1 and op(1,[args])=termCell then
+print(`termCell(T): Inputs a standard Young tableaux and outputs the terminal cell location of T. Try:`):
+print(`termCell([[1, 3, 4], [2, 5, 6], [7, 8, 9]]);`):
+
+
+elif nops([args])=1 and op(1,[args])=rowSum then
+print(`rowSum(T,c): Inputs a standard Young tableaux T and a cell c, and outputs the sum of all entries in the row containing cell c. Try:`):
+print(`rowSum([[1, 3, 4], [2, 5, 6], [7, 8, 9]], [2,1]);`):
+
+
+elif nops([args])=1 and op(1,[args])=colSum then
+print(`colSum(T,c): Inputs a standard Young tableaux T and a cell c, and outputs the sum of all entries in the column containing cell c. Try:`):
+print(`colSum([[1, 3, 4], [2, 5, 6], [7, 8, 9]], [1,2]);`):
+
+
+
+else
+print(`There is no Help for`,args):
+fi:
+end:
+
+
+
+
+
+
+
+
+
+############START OF SYT PROCEDURES
+
+## number of entries in the backwards hook of cell c = [a,b] in the tableau T which are smaller than entry [a,b]
+## backhook = in column left of c and in same row or below 
+## currently generalized procedure, but we can use termCell(T) to obtain the position of cell n
+backHook:=proc(T,c) local i,j,k,e,x,count:
+i:=c[1]:
+j:=c[2]:
+k:=nops(T):  # number of rows
+count:=0:
+
+e:=T[i,j]:    # element at top of hook being considered
+
+if j = 1 then 
+  RETURN(0):
+fi:
+
+for x from i to k while nops(T[x])>=j-1 do 
+ if e>T[x][j-1] then 
+  count++
+ fi:
+od:
+count:
+end:
+
+## sum of backHook length across all cells in T 
+SumBackHook:=proc(T) local i,j,k,e,x,count:
+add( add(backHook(T,[i,j]), j=1..nops(T[i])), i=1..nops(T[i])):
+end:
+
+
+## terminal cell location of tableau T
+termCell:=proc(T): 
+[max[index](T)]: 
+end:
+
+
+# sum across row containing cell c in tableau T 
+rowSum := proc(T,c) local r,k,i:
+r := c[1]: 
+k := nops(T[r]):
+add(T[r][i], i=1..k):
+end:
+
+
+# sum down column containing cell c in tableau T
+colSum := proc(T,c) local v,k,i:
+v := c[2]:
+
+# how long is column v? 
+k := 0:
+for i from 1 to nops(T) while nops(T[i]) >= v do k++: od:
+add(T[i][v], i=1..k):
+end:
+
+
+
+
+## ERROR CHECKER -- IS INPUT AN SYT
+isSYT:=proc(T) local n,k,i,j,lens:
+k:=nops(T):
+n:=add(nops(T[i]), i=1..k):
+
+# check shape 
+lens:=[seq(nops(T[i]), i=1..k)]:
+for j from 2 to nops(lens) do 
+ if not lens[j-1] >= lens[j] then 
+  RETURN(false):
+ fi:
+od:
+
+# check *standard* young tableau
+if not {seq(op(T[i]), i=1..k)}={seq(1..n)} then  # set of entries is not {1,...,n = number of boxes}
+ RETURN(false):
+fi:
+
+#check increasing rows 
+for i from 1 to k do 
+ for j from 2 to nops(T[i]) do 
+  if not T[i][j-1] < T[i][j] then
+   RETURN(false):
+  fi:
+ od:
+od:
+
+
+# check increasing columns. j is the column number
+for j from 1 to nops(T[1]) do 
+ for i from 2 to k while nops(T[i]) >= j do      # for each successive row whose length is long enough to have an entry
+  if not T[i-1][j] < T[i][j] then 
+   RETURN(false):
+  fi:
+ od:
+od:
+true:
+end:
+
+#########PROCEDURES FROM CLASS
+
+OT:=proc(L) local n,c:
+n:=convert(L,`+`):
+c:=Cells(L)[rand(1..n)()]:
+while HL(L,c)>1 do
+ c:=Hook(L,c)[rand(1..HL(L,c))()]:
+od:
+c:
+end:
+
+
+#RandSYT(L): a random SYT of shape L
+RandSYT:=proc(L) local k,c,i,L1,n,Y1:
+
+if L=[1] then
+  RETURN([[1]]):
+fi:
+
+n:=convert(L,`+`):
+
+k:=nops(L):
+c:=OT(L):
+i:=c[1]:
+
+L1:=[op(1..i-1,L),L[i]-1,op(i+1..k,L)]:
+if L1[-1]=0 then
+L1:=[op(1..nops(L1)-1,L1)]:
+fi:
+
+Y1:=RandSYT(L1):
+if nops(L1)=k then
+[op(1..i-1,Y1),[op(Y1[i]),n],op(i+1..k,Y1)]:
+else
+[op(1..k-1,Y1),[n]]:
+fi:
+end:
+
+
+#Cells(L): the set of n (=sum(L)) cells [i,j]in the shape L
+Cells:=proc(L) local k,i,j:
+k:=nops(L):
+{seq(seq([i,j]   , j=1..L[i]  ), i=1..k)}
+end:
+
+
+#Conj(L): Given a partition L outputs the conjugate of L
+Conj:=proc(L) local k,C1,i1,L1,i:
+option remember:
+if L=[] then
+RETURN([]):
+fi:
+k:=nops(L):
+L1:=[seq(L[i]-1,i=1..k)]:
+
+for i1 from 1 to nops(L1) while L1[i1]>0 do od:
+i1:=i1-1:
+
+L1:=[op(1..i1,L1)]:
+
+C1:=Conj(L1):
+[k,op(C1)]:
+end:
+
+
+#Hook(L,c): The set of the cells in the hoo corresponding to the cell c=[i,j]
+#(i.e. the set of cells to the right and to the bottom of c
+Hook:=proc(L,c) local k,i,j,C,i1,j1,i2:
+k:=nops(L):
+i:=c[1]:
+j:=c[2]:
+if not (i>=1 and i<=k) then
+  RETURN(FAIL):
+fi:
+
+if not(j>=1 and j<=L[i]) then
+  RETURN(FAIL):
+fi:
+
+C:={seq([i,j1],j1=j..L[i])}:
+
+for i2 from i to k while j<=L[i2] do od:
+i2:=i2-1:
+C:=C union {seq([i1,j],i1=i..i2)}:
+end:
+
+
+#HL(L,c): the hook-length of cell c in the shape L
+HL:=proc(L,c) local i,j,L1:
+L1:=Conj(L):
+i:=c[1]:
+j:=c[2]:
+L[i]-j+L1[j]-i+1:
+end:
+
+
+#NuSYT(L): implementing the Frame-Robinson-Thrall Hook Length Formula Cleverly
+NuSYT:=proc(L) local n,C,i,c:
+n:=add(L[i],i=1..nops(L)):
+C:=Cells(L):
+n!/mul(HL(L,c),c in C):
+end:
+
+#############END OF SYT PROCEDURES
+
+
+#############START OF STATS
+
+
+#GenerateManySYT(L,K): Given a list of weakly increasing positive integers L,
+# an integer K, outputs K random standard Young tableaux using the
+# Greene-Nijenhuis-Wilf algorithm
+GenerateManySYT:=proc(L,K) local n,ra,L1,i:
+L1:=[seq(RandSYT(L),i=1..K)]:
+end:
+
+
+#BSstat1(L,B,c,property): Given a list L (of standard Young tableaux),
+# an integer B, a cell c and a property from the list of HelpProperties()
+# outputs the average of the desired property for the B bootstrap samples
+BSstat1:=proc(L,B,c,property) local M,M1,A,i,j,L1,s:
+L1:=GenerateManySYT(L,B):
+#Note: BSsamp(L1) contains B tableaux
+M:=[seq(BSsamp(L1),i=1..B)]: #generate B bootstraps from the list L1
+
+#Generate the list of the desired property for the bootstraps:
+M1:=[seq([seq(property(M[i][j],c),j=1..B)],i=1..B)]:
+A:=[seq(Av(s),s in M1)]: #calculate the average of the averages
+Av(A):
+end:
+
+
+
+#BSse1(L,B,c,property): Given a list L (of standard Young tableaux),
+# an integer B, a cell c and a property from the list of HelpProperties()
+# outputs the Bootstrap estimate of the standard error of the data set L
+BSse1:=proc(L,B,c,property) local M,M1,A,i,j,L1,s,mu:
+L1:=GenerateManySYT(L,B):
+#Note: BSsamp(L1) contains B tableaux
+M:=[seq(BSsamp(L1),i=1..B)]: #generate B bootstraps from the list L1
+
+#Generate the list of the desired property for the bootstraps:
+M1:=[seq([seq(property(M[i][j],c),j=1..B)],i=1..B)]:
+A:=[seq(Av(s),s in M1)]: 
+mu:=Av(A): #calculate the average of the averages
+evalf(sqrt(add((A[i]-mu)^2,i=1..B)/(B-1))):
+end:
+
+
+
+#BSstat2(L,B,c,property): Given a SYT shape L, an integer B, a cell c, 
+# and a property from the list of HelpProperties()
+# outputs the average of the desired property for the B random SYT/bootstrap samples
+# NOTE: this method takes longer to compute since B^B many random SYT are generated rather than only B 
+BSstat2:=proc(L,B,c,property) local M,M1,A,i,j,L1,s:
+M:=[seq([seq(RandSYT(L),i=1..B)],j=1..B)]: #generate B random SYT using the Greene-Nijenhuis-Wilf algorithm as a proxy for a bootstrap
+
+#Generate the list of the desired property for the bootstraps:
+M1:=[seq([seq(property(M[i][j],c),j=1..B)],i=1..B)]:
+A:=[seq(Av(s),s in M1)]: #calculate the average of the averages
+Av(A):
+end:
+
+
+###PROCEDURES FROM CLASS
+
+#Av(L): Given a list L of numbers outputs the average (aka mean, aka expectation)
+Av:=proc(L) local n,i:
+n:=nops(L):
+evalf(add(L[i],i=1..n)/n):
+end:
+
+
+#SE(L): The classical textbook formula for the standard-error
+SE:=proc(L) local n,mu,i:
+n:=nops(L):
+mu:=Av(L):
+#add the squares of the deviations from the average
+evalf(sqrt(add((L[i]-mu)^2,i=1..n))/n):
+end:
+
+
+#BSsamp(L): ONE bootstrap sample from the data list L
+BSsamp:=proc(L) local n,ra,L1,i:
+n:=nops(L):
+ra:=rand(1..n):
+L1:=[seq(L[ra()],i=1..n)]:
+end:
+
+
+#BSse(L,B): The Bootstrap estimate of the standard error of the data set L
+BSse:=proc(L,B) local M,i,mu:
+M:=[seq(Av(BSsamp(L)),i=1..B)]:
+mu:=Av(M):
+evalf(sqrt(add((M[i]-mu)^2,i=1..B)/(B-1))):
+end:
+
+
+#Moms(f,x,r): 
+Moms:=proc(f,x,r) local mu,L,f1,sig,i:
+
+f1:=f/subs(x=1,f):
+
+mu:=subs(x=1,diff(f1,x)):
+
+L:=[mu]:
+
+f1:=f1/x^mu:
+#g.f. of X-mu
+#Centralized pgf
+
+f1:=x*diff(f1,x):
+
+f1:=x*diff(f1,x):
+sig:=sqrt(subs(x=1,f1)):
+L:=[mu,sig]:
+
+for i from 3 to r do
+f1:=x*diff(f1,x):
+L:=[op(L), subs(x=1,f1)]:
+od:
+L:
+end:
+
+
+SMoms:=proc(f,x,r) local L,sig,i:
+L:=Moms(f,x,r):
+sig:=L[2]:
+[op(1..2,L),seq(L[i]/sig^i    , i=3..r)]:
+end:
+
+#############END OF STATS
+
