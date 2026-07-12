@@ -14,6 +14,22 @@
         <link href='https://fonts.googleapis.com/css?family=Roboto:700,400' rel='stylesheet' type='text/css'>
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 		<link rel="icon" href="/assets/favicon4.ico" type="image/x-icon" />
+
+
+		<script>
+        window.onload = function () {
+            const destination = window.location.href;
+            if (window.location.href.includes("aurorahiveley.github.io/wordle")) {
+                const redirectLocation = window.location.href.replace(
+                    "aurorahiveley.github.io/wordle",
+                    "aurorahiveley.github.io/research/wordle"
+                );
+                document.getElementById("body").innerHTML = "Wordle files have been moved to a research directory.<br/><br/>Redirecting to " + redirectLocation + " ...";
+                window.location.href = redirectLocation;
+            }
+        }
+    </script>
+
 	</head>
 	<body class="is-preload">
 
@@ -112,6 +128,7 @@
 									</p>
 
 									<p>Other Course Projects:
+									<br>
 									- Modeling "The Smile" (Erdos Institute Quantitative Finance Bootcamp, Summer 2026) [<a href = "https://github.com/UranMai/Quant-Finance-project/tree/main">GitHub Repository</a>]
 									</p>
 
