@@ -16,8 +16,10 @@
   --color3: #cfcdaa;
   /* --color3-2: #e7e4bd; */
   --color3-2: #f1efd7;
-  --color4: #529664; 	/*darker shade than color 1*/
-  --color5: #3d704b; 	/*darkest of colors 1 and 4*/
+  --color4: #886451;
+  --color4-2: #a68b7c;
+  --colorx: #529664; 	/*darker shade than color 1*/
+  --colory: #3d704b; 	/*darkest of colors 1 and 4*/
 
   /* text colors, rgba = (red, green, blue, alpha) where alpha is transparency. 0 is fully transparent */ 
 }
@@ -114,7 +116,7 @@ input, select, textarea {
 	}
 
 	body {
-		background: var(--color4);
+		background: var(--colorx);
 	}
 
 		body.is-preload *, body.is-preload *:before, body.is-preload *:after {
@@ -1932,7 +1934,7 @@ input, select, textarea {
 		button.primary,
 		.button.primary {
 			background-color: #ffffff;
-			color: var(--color4) !important;
+			color: var(--colorx) !important;
 		}
 
 			input[type="submit"].primary:after,
@@ -2373,7 +2375,7 @@ input, select, textarea {
 
 		select option {
 			color: #ffffff;
-			background: var(--color4);
+			background: var(--colorx);
 		}
 
 		select:focus::-ms-value {
@@ -2542,7 +2544,7 @@ input, select, textarea {
 			display: block;
 			background: #ffffff;
 			border-radius: 100%;
-			color: var(--color4);
+			color: var(--colorx);
 			text-align: center;
 			line-height: 2.5em;
 			margin: 0 0 1.3em 0;
@@ -2574,6 +2576,14 @@ input, select, textarea {
 
 				.wrapper.style3-alt .icon.major:before {
 					color: var(--color3-2);
+				}
+
+				.wrapper.style4 .icon.major:before {
+					color: var(--color4);
+				}
+
+				.wrapper.style4-alt .icon.major:before {
+					color: var(--color4-2);
 				}
 
 /* Image */
@@ -3039,7 +3049,7 @@ input, select, textarea {
 				-webkit-transition: opacity 1s ease;
 				-ms-transition: opacity 1s ease;
 				transition: opacity 1s ease;
-				background: var(--color5);
+				background: var(--colory);
 				content: '';
 				display: block;
 				height: 100%;
@@ -3085,6 +3095,10 @@ input, select, textarea {
 		}
 
 		.spotlights > section:nth-child(3) {
+			background-color: rgba(0, 0, 0, 0.1);
+		}
+
+		.spotlights > section:nth-child(4) {
 			background-color: rgba(0, 0, 0, 0.1);
 		}
 
@@ -3253,7 +3267,7 @@ input, select, textarea {
 			}
 
 		.wrapper.alt {
-			background-color: var(--color5);
+			background-color: var(--colory);
 		}
 
 		.wrapper.style1 {
@@ -3541,7 +3555,7 @@ input, select, textarea {
 
 	#sidebar {
 		padding: 2.5em 2.5em 0.5em 2.5em ;
-		background: var(--color4);
+		background: var(--colorx);
 		cursor: default;
 		height: 100vh;
 		left: 0;
@@ -3778,7 +3792,7 @@ input, select, textarea {
 			}
 
 			#sidebar nav a:before {
-				background: var(--color5); /*could be color6, even darker*/
+				background: var(--colory); /*could be color6, even darker*/
 			}
 
 			#sidebar nav a:after {
