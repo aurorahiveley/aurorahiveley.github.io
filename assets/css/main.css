@@ -216,10 +216,10 @@ input, select, textarea {
 		}
 
 			h1.major:after {
-				background-image: -moz-linear-gradient(to right, var(--color1), var(--color4));
-				background-image: -webkit-linear-gradient(to right, var(--color1), var(--color4));
-				background-image: -ms-linear-gradient(to right, var(--color1), var(--color4));
-				background-image: linear-gradient(to right, var(--color1), var(--color4));
+				background-image: -moz-linear-gradient(to right, var(--color1), var(--color3));
+				background-image: -webkit-linear-gradient(to right, var(--color1), var(--color3));
+				background-image: -ms-linear-gradient(to right, var(--color1), var(--color3));
+				background-image: linear-gradient(to right, var(--color1), var(--color3));
 				-moz-transition: max-width 0.2s ease;
 				-webkit-transition: max-width 0.2s ease;
 				-ms-transition: max-width 0.2s ease;
@@ -2463,7 +2463,7 @@ input, select, textarea {
 		input[type="radio"]:checked + label:before {
 			background: #ffffff;
 			border-color: #ffffff;
-			color: var(--color4);
+			color: var(--color3);
 			content: '\f00c';
 		}
 
@@ -3804,10 +3804,10 @@ input, select, textarea {
 			}
 
 			#sidebar nav a:after {
-				background-image: -moz-linear-gradient(to right, var(--color1), var(--color4));
-				background-image: -webkit-linear-gradient(to right, var(--color1), var(--color4));
-				background-image: -ms-linear-gradient(to right, var(--color1), var(--color4));
-				background-image: linear-gradient(to right, var(--color1), var(--color4));
+				background-image: -moz-linear-gradient(to right, var(--color1), var(--color3));
+				background-image: -webkit-linear-gradient(to right, var(--color1), var(--color3));
+				background-image: -ms-linear-gradient(to right, var(--color1), var(--color3));
+				background-image: linear-gradient(to right, var(--color1), var(--color3));
 				-moz-transition: max-width 0.2s ease;
 				-webkit-transition: max-width 0.2s ease;
 				-ms-transition: max-width 0.2s ease;
