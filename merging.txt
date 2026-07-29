@@ -1,0 +1,1434 @@
+### written by: Aurora Hiveley and Doron Zeilberger, Rutgers University
+### last updated: July 19, 2026
+
+print(`This is MERGING.txt, a Maple package by Aurora Hiveley and Doron Zeilberger (Rutgers University)`):
+print(`accompanying their article: The Combinatorics of Lane Merging available from`):
+print(``):
+print(`https://sites.math.rutgers.edu/~zeilberg/mamarim/mamarimhtml/merging.html`):
+print(``):
+print(`Also from Aurora Hiveley's web-site:`):
+print(`https://aurorahiveley.github.io/`):
+
+print(`For a list of the functions, type Help(); for help with a specific function type: Help(FunctionName);`):
+print(`For a list of supporting functions, type Help1(); or Help1(FunctionName) for specific function information`):
+
+with(combinat):
+
+Help:=proc(): 
+
+if nargs=0 then 
+
+print(`PRIMARY FUNCTIONS:`):
+
+print(`Sequences: K(k,n), kLane(k,A), kVote(k,A), laneLens(k,A), LaneSeqsC(T), majorityP(k,A), mergingP(k,A), VoteSeqsC(T)`):
+print(`Tableau Analysis: bounceCounter(T,c), numSeqToSYT(T,k), SYTgfc(k,n, var := x), SYTkn(k,n)`):
+print(`Generating Functions: GFl(k,n,x), GFlcf(k,n,var:=x), GFv(k,n,X)`):
+print(`Closed Form: CF(endstate), G2(m,n), G3(a,b,c), G4(a,b,c,d),`):
+
+
+## LANE SIMULATION TOOLS
+
+elif nargs=1 and args[1]=K then 
+print(`K(k,n): outputs the set of all strings of length n with elements {1,..,k}`);
+print(`input: alphabet size k, string length n`);
+print(`output: set of k-ary strings encoded as lists`):
+print(`example: K(2,5); K(3,3);`):
+
+elif nargs=1 and args[1]=laneLens then 
+print(`laneLens(k,A): the lengths of all k lanes after the arrival sequence A has been resolved`):
+print(`input: arrival sequence A and number of lanes k`):
+print(`output: a list of lengths of lanes after the arrival sequence has been resolved,`): 
+print(`i.e., L[1] = number of cars in the rightmost lane, through L[k] = number of cars in the leftmost lane`):
+print(`example: laneLens(3,[1,1,2,3,3,2,1,3,2])`):
+
+elif nargs=1 and args[1]=kLane then
+print(`kLane(k,A): computes the ending configuration of the lane merging scenario represented by the arrival sequence A for k lanes`);
+print(`input: k-ary string representing arrival sequence A`);
+print(`output: a list L = [L1,L2,..,Lk] where L1 is the list (in order) of cars in the right lane, L2 is the same for the next lane, `);
+print(`ending with Lk as the same for the leftmost lane.`);
+print(`example: kLane(2,[1,1,2,2,2,1,1,2]); kLane(3,[1,1,2,3,3,2,1,3,2]);`);
+
+elif nargs=1 and args[1]=kVote then
+print(`kVote(k,A): computes the ending configuration of the voting scenario represented by the voting sequence A for k candidates`);
+print(`input: k-ary string representing voting sequence A`);
+print(`output: a list L = [L1,L2,..,Lk] where L1 is the list (in order) of voters who voted for the most popular candidate, `);
+print(` L2 is the same for the second most popular candidate, and ending with Lk as the same for the least popular candidate.`);
+print(`example: kVote(3,[1,1,1,2,2,3,3,3,3]); `);
+
+elif nargs = 1 and args[1]=LaneSeqsC then 
+print(`LaneSeqsC(T): all arrival sequences which resolve to tableau T, cleverly`): 
+print(`input: SYT T`):
+print(`output: output a list of all arrival sequences that resolve to T, using recursion`):
+print(`example: LaneSeqsC([[1,2],[3,4]]);`):
+
+elif nargs = 1 and args[1]=VoteSeqsC then 
+print(`VoteSeqsC(T): all voting sequences which resolve to tableau T, cleverly`): 
+print(`input: SYT T`):
+print(`output: output a list of all voting sequences that resolve to T, using recursion`):
+print(`example: VoteSeqsC([[1,2],[3,4]]);`):
+
+
+### WALKS 
+
+elif nargs=1 and args[1]=mergingP then 
+print(`mergingP(k,A): generates the merging path of points p produced by a k-ary arrival sequence A`); 
+print(`according to a generalization of the framework outlined in Bardenova et al. (2022)`):
+print(`now, coordinate p1 is incremented when a car joins the rightmost lane, coordinate p2 is incremented`):
+print(`when a car joins the next lane, and so on. finally, coordinate pk is incremeneted when a car joins the rightmost lane.`):
+print(`input: number of lanes k and a k-ary arrival sequence A`):
+print(`output: a list of points [p1,p2,...,pk] hit by the merging path`):
+print(`example: mergingP(2,[1,1,2,2,2,1,1,2]); mergingP(3,[1,1,2,3,3,2,1,3,2]);`):
+
+elif nargs=1 and args[1]=majorityP then 
+print(`majority(k,A): generates the majority path of points p produced by a voting sequence with k choices`); 
+print(`where a point p = [p1, p2, ..., pk] is the number of votes of the most to least popular choices`):
+print(`so p[i] is the number of votes for the i-th most popular choice after m := add(p[i], i=1..k) votes have been cast`);
+print(`input: number of choices k and a voting sequence A`):
+print(`output: a list of points [p1,p2,...,pk] hit by the majority path`):
+print(`example: majorityP(2,[1,1,2,2,2,1,1,2]); majorityP(3,[1,1,2,3,3,2,1,3,2]);`):
+
+
+### GENERATING FUNCTIONS
+
+elif nargs = 1 and args[1]=GFl then 
+print(`GFl(k,n,var:=x): computes the generating function for arrival sequences according to the overall output`): 
+print(`input: number of lanes k, number of cars n, and variable for function (default x)`):
+print(`output: generating function for all arrival sequences of length n with k lanes, computed using kLane's brute force output`):
+print(`example: GFl(3,4); GFl(2,7);`):
+
+elif nargs = 1 and args[1]=GFv then 
+print(`GFv(k,n,var:=x): computes the generating function for voting sequences according to the overall output`): 
+print(`input: number of candidates k, number of voters n, and variable for function (default x)`):
+print(`output: generating function for all voting sequences of length n with k candidates, computed using kVote's brute force output`):
+print(`example: GFv(3,4); GFv(2,7);`):
+
+elif nargs=1 and args[1]=GFlcf then 
+print(`GFlcf(k,n,var := x): the multivariate statistical generating function representing the distribution across all arrival sequences in K(k,n)`):
+print(`where each term takes the form x_1^m_1*x_2^m_2*...*x_k^m_k, counting the number of arrival sequences which end with this configuration`):
+print(`input: number of lanes k, arrival sequence length n, and optional parameter for variable (default x)`):
+print(`output: the multivariate statistical generating function, i.e., a polynomial where the coefficient of x_1^m_1*x_2^m_2*...*x_k^m_k is `):
+print(`the number of arrival sequences in K(k,n) which result with this configuration, calculated using the closed form for all partitions of n into k pieces`):
+print(`example: GFlcf(2,4); GFlcf(3,6);`):
+
+
+### RECURRENCES AND CLOSED FORM ENUMERATION 
+
+elif nargs = 1 and args[1]=G2 then 
+print(`G2(m,n): computes the number of arrival sequences which end with m cars in the right lane and n in the left lane using recurrence`): 
+print(`input: integers m and n representing final lane lengths`):
+print(`output number of arrival sequences whose paths end with those lane lengths`):
+print(`example: G2(2,0); G2(6,5);`):
+
+elif nargs = 1 and args[1]=G3 then 
+print(`G3(a,b,c): using recurrence cases, computes the number of arrival sequences`):
+print(`which end with a cars in the right lane, b in the middle, and c in the left lane`): 
+print(`input: nonincreasing integers a,b,c representing the lane lengths from right to left`):
+print(`output: number of arrival sequences which end with the input lane lengths`):
+print(`example: G3(3,2,1); G3(6,4,2);`):
+
+elif nargs = 1 and args[1]=G4 then 
+print(`G4(a,b,c,d): using recurrence cases, computes the number of arrival sequences`):
+print(`which end with a cars in the right lane, b in the second rightmost lane, c in the third lane, and d in the leftmost lane`): 
+print(`input: nonincreasing integers a,b,c,d representing the lane lengths from right to left`):
+print(`output: number of arrival sequences which end with the input lane lengths`):
+print(`example: G4(3,2,2,1); G4(6,4,2,1);`):
+
+elif nargs = 1 and args[1] = CF then 
+print(`CF(endstate): calculates the number of arrival sequences which end with the configuration endstate`):
+print(`using the closed form from Theorem 13`):
+print(`input: a list of weakly decreasing lane lengths, endstate, where nops(endstate) = k is the number of lanes`):
+print(`output: the number of arrival sequences ending with the endstate configuration, `):
+print(`example: CF([2,1]); CF([4,3,2]);`):
+
+
+### STANDARD YOUNG TABLEAU ANALYSIS
+
+elif nargs = 1 and args[1] = SYTkn then 
+print(`SYTkn(k,n): set of all SYT with n entries and at most k rows`):
+print(`input: integers k and n `):
+print(`output: set of all SYT with n entries and k rows (possibly empty)`):
+print(`example: SYTkn(2,4); SYTkn(3,5)`):
+
+elif nargs = 1 and args[1] = bounceCounter then 
+print(`bounceCounter(T,c): the number of cells in the column to the left of cell c which are below cell c`):
+print(`and which are smaller than the entry in cell c. i.e., beta(c) in the definition of a bounce.`):
+print(`input: a SYT, T, and the location of a cell c = [i,j]`):
+print(`output: integer number of cells in the column to the left of c which are smaller than the entry in cell c`):
+print(`example: bounceCounter([[1,4,6],[3,5],[7]], [1,2]);  bounceCounter([[1,4,6],[3,5],[7]], [2,2]); `)
+
+elif nargs = 1 and args[1] = SYTgfc then 
+print(`SYTgfc(k,n,var := x): statistical generating function of arrival sequences as SYT with k rows and n elements `):
+print(`using the product of beta(c) for each cell c`):
+print(`input: number of lanes k and number of tableau entries n, optional parameter for variable var (default x)`):
+print(`output: the statistical generating function, computed by the conjectured product formula, where the coefficient `):
+print(`of var[T] for a tableau T is the number of arrival sequences whose final arrangement is the tableau T `):
+print(`example: SYTgfc(2,4); `): 
+
+elif nargs = 1 and args[1] = numSeqToSYT then 
+print(`numSeqToSYT(T,k): value computed by product formula for the number of arrival sequences`):
+print(`which resolve to the tableau T`):
+print(`input: tableau T and number of lanes k `):
+print(`output: the number of arrival sequences for k lanes which produce the final arrangement in the tableau T`):
+print(`example: numSeqToSYT([[1,3,5],[2,4]],2)`):
+
+
+
+else 
+print(`No such function exists. Type Help(); for a list of functions.`):
+
+fi:
+
+end:
+
+
+
+
+#########################################################################################################
+
+Help1:=proc(): 
+
+if nargs=0 then 
+
+print(`SECONDARY FUNCTIONS:`):
+
+print(`Sequences: ExtVo(k,v,g), LaneRange(k,A), LaneSeqs(T), LaneTable(k,n), VoteRange(k,V), VoteSeqs(T), VoteTable(k,n)  `):
+print(`Tableau Analysis: RatK(T), RatKc(T), Park(n,k), SYTaddn(T), SYTdelete(T), SYTgfbf(k,n,var := x)`):
+print(`Generating Functions: GFlgen(k,n,i,var:=x), GFlmulti(k,n,var := x)`):
+print(`Statistics: EVbf(k,n,i:=1), EVc(k,n,i:=1), SD(k,n,i:=1), Var(k,n,i:=1)`):
+print(`Helpers & Error Checkers: ff(n,k), freq(L), isSYT(L), Rank(L), SV(k,V) `):
+
+
+## SEQUENCES 
+
+elif nargs = 1 and args[1]=VoteRange then 
+print(`VoteRange(k,V): sequences in the range of V, i.e., that produce the same output tableau as V by changing only the last digit`): 
+print(`input: voting sequence V with k candidates `):
+print(`output: list of all possible n-th digits of sequence which would produce the same tableau that V produces `):
+print(`example: VoteRange(3,[1,1,2,2,3,3]);`):
+
+elif nargs = 1 and args[1]=LaneRange then 
+print(`LaneRange(k,A): sequences in the range of A, i.e., that produce the same output tableau as A by changing only the last digit`): 
+print(`input: arrival sequence A with k lanes `):
+print(`output: list of all possible n-th digits of sequence which would produce the same tableau that A produces `):
+print(`example: LaneRange(3,[1,1,2,2,3,3]);`):
+
+elif nargs = 1 and args[1]=LaneSeqs then 
+print(`LaneSeqs(T): all arrival sequences which resolve to tableau T`): 
+print(`input: SYT T`):
+print(`output: output a list of all arrival sequences that resolve to T, using LaneTable`):
+print(`example: LaneSeqs([[1,2],[3,4]]);`):
+
+elif nargs = 1 and args[1]=VoteSeqs then 
+print(`VoteSeqs(T): all voting sequences which resolve to tableau T`): 
+print(`input: SYT T`):
+print(`output: output a list of all voting sequences that resolve to T, using VoteTable`):
+print(`example: VoteSeqs([[1,2],[3,4]]);`):
+
+elif nargs = 1 and args[1]=LaneTable then 
+print(`LaneTable(k,n): table of SYT with at most k rows and n total boxes and the arrival sequences which resolve to it`): 
+print(`input: number of lanes k and number of cars n `):
+print(`output: a table that for each tableau with n boxes and k rows (some possibly empty)`):
+print(`shows the set of arrival sequences that lead to that tableau`):
+print(`example: LaneTable(3,5);`):
+
+elif nargs = 1 and args[1]=VoteTable then 
+print(`VoteTable(k,n): table of SYT with at most k rows and n total boxes and the voting sequences which resolve to it`): 
+print(`input: number of candidates k and number of voters n `):
+print(`output: a table that for each tableau with n boxes and k rows (some possibly empty)`):
+print(`shows the set of voting sequences that lead to that tableau`):
+print(`example: VoteTable(3,5);`):
+
+elif nargs = 1 and args[1]=ExtVo then 
+print(`ExtVo(k,V,g): extensions of the voting sequence V which cast an additional vote for candidate g `): 
+print(`input: number of candidates k, voting sequence V, candidate g (1 <= g <= k)`):
+print(`output: the set of all voting sequences which extend V by casting a vote for candidate g  `):
+print(`example: ExtVo(4,[1,2,3,4,1,2,3,1,2],2); `):
+
+
+### GENERATING FUNCTIONS
+
+elif nargs=1 and args[1]=GFlgen then 
+print(`GFlgen(k,n,i:=1,var := x): the statistical generating function representing the distribution across all arrival sequences in K(k,n)`):
+print(`counting the number of cars in the lane indexed i (where 1 is the rightmost lane and k is the leftmost.)`):
+print(`input: number of lanes k, arrival sequence length n, lane index i (default 1), and optional parameter for variable (default x)`):
+print(`output: the statistical generating function, i.e., a polynomial where the coefficient of x^m is `):
+print(`the number of arrival sequences in K(k,n) which result in m cars in the lane index i`):
+print(`example: GFlgen(2,4,1); GFlgen(3,6,1);`):
+
+elif nargs=1 and args[1]=GFlmulti then 
+print(`GFlmulti(k,n,var := x): the multivariate statistical generating function representing the distribution across all arrival sequences in K(k,n)`):
+print(`where each term takes the form x_1^m_1*x_2^m_2*...*x_k^m_k, counting the number of arrival sequences which end with this configuration`):
+print(`input: number of lanes k, arrival sequence length n, and optional parameter for variable (default x)`):
+print(`output: the multivariate statistical generating function, i.e., a polynomial where the coefficient of x_1^m_1*x_2^m_2*...*x_k^m_k is `):
+print(`the number of arrival sequences in K(k,n) which result with this configuration`):
+print(`example: GFlmulti(2,4); GFlmulti(3,6);`):
+
+
+### STANDARD YOUNG TABLEAU ANALYSIS
+
+elif nargs = 1 and args[1]=SYTdelete then 
+print(`SYTdelete(T): recursive SYT resulting from deletion of largest element n, and the number of possible candidate`):
+print(`digits in {0,..,k-1} which could have been in position "n" of an arrival sequence which produced the tableau T`):
+print(`input: standard young tableau, T`):
+print(`output: new SYT after deletion of cell labelled n, and number of possible digits in entry n of arrival sequence`):
+print(`example: SYTdelete([[1,2],[3,4],[5,6]]); SYTd([[1,2,6],[3,4],[5]]);`):
+
+elif nargs = 1 and args[1]=SYTaddn then 
+print(`SYTaddn(T): set of SYT acquired by adding next largest element to the existing tableau T in each legal position`):
+print(`IMPORTANTLY: while maintaining the number of (possibly empty) rows of the tableau`):
+print(`input: standard young tableau, T`):
+print(`output: set of new SYT obtained by adding n in each legal position, maintaining existing number of rows`):
+print(`example: SYTaddn([[1,2],[3,4],[5]]); SYTaddn([[1,2],[3],[]]);`):
+
+elif nargs = 1 and args[1]=RatK then 
+print(`RatK(T): computes the ratio of the number of arrival sequences which produce the tableau T and the tableau T' = T - [n]`): 
+print(`input: tableau T with k rows and n entries`):
+print(`output: ratio of sequences which produce T and which produced T' = T - [n]`):
+print(`example: RatK([[1,2,3,8],[4,5],[6,7]])`):
+
+elif nargs = 1 and args[1]=RatKc then 
+print(`RatKc(T): cleverly computes the ratio of the number of arrival sequences which produce the tableau T and the tableau T' = T - [n]`): 
+print(`input: tableau T with k rows and n entries`):
+print(`output: ratio of sequences which produce T and which produced T' = T - [n], computing by counting the size of the bounce`):
+print(`example: RatKc([[1,2,3,8],[4,5],[6,7]])`):
+
+elif nargs = 1 and args[1] = SYTgfbf then 
+print(`SYTgfbf(k,n,var := x): statistical generating function of arrival sequences as SYT with k rows and n elements `):
+print(`input: number of lanes k and number of tableau entries n, optional parameter for variable var (default x)`):
+print(`output: the statistical generating function, computed by brute force, where the coefficient `):
+print(`of var[T] for a tableau T is the number of arrival sequences whose final arrangement is the tableau T `):
+print(`example: SYTgfbf(2,4); `): 
+
+elif nargs = 1 and args[1]=Park then 
+print(`Park(n,k): partitions of n into exactly k blocks (possibly empty)`): 
+print(`input: integers n and k`):
+print(`output: set of all partitions, given as lists of weakly decreasing block sizes`):
+print(`example: Parnk(5,3); Parnk(4,2);`):
+
+
+
+### STATISTICS 
+
+elif nargs=1 and args[1]=EVbf then 
+print(`EVbf(k,n,i:=1): computes the expected length of the lane indexed by i for k lanes and arrival sequences of l`):
+print(`input: number of lanes k, lane index i (from 1 to k, counted right to left, default is 1), and arrival sequence length l`):
+print(`output: expected length of lane i. multiply by k^l to count generalization of R(B_l)`):
+print(`example: EVbf(2,1,4); EVbf(3,3,5);`):
+
+elif nargs=1 and args[1]=EVc then 
+print(`EVc(k,n,i:=1): computes the expected length of the lane indexed by i for k lanes and arrival sequences of l`):
+print(`input: input the number of lanes k, number of cans n, and index of lane of interest i (from right to left, default 1)`):
+print(`output: expected length of lane i, calculated cleverly using the closed form`):
+print(`example: EVc(2,1,4); EVc(3,3,5);`):
+
+elif nargs=1 and args[1]=Var then 
+print(`Var(k,n,i:=1): calculates, using the proven closed form, the variance of the length of lane i over all k-lane arrival sequences of length n`):
+print(`input: number of lanes k, number of cars n, and the index i of lane of interest (1 <= i <= k, default is 1)`):
+print(`output: variance, as a decimal`):
+print(`example: Var(4,2,1);`):
+
+elif nargs=1 and args[1]=SD then 
+print(`SD(k,n,i:=1): calculates, using the proven closed form, the standard deviation of the length of lane i over all k-lane arrival sequences of length n`):
+print(`input: number of lanes k, number of cars n, and the index i of lane of interest (1 <= i <= k, default is 1)`):
+print(`output: standard deviation, as a decimal`):
+print(`example: SD(4,2,1);`):
+
+
+### HELPERS 
+
+elif nargs = 1 and args[1] = isSYT then 
+print(`isSYT(T): returns boolean for if the shape T is a SYT. checks legality of shape, increasing rows and columns, and standard-ness`):
+print(`input: shape T, given as a list of lists corresponding to each row of the tableau`):
+print(`output: boolean true/false `):
+print(`example: isSYT([[1,2,3],[4,5],[6]]); isSYT([[1,2],[3,4,5],[6]]); isSYT([[1,2,4],[4,5],[6]])`):
+
+elif nargs = 1 and args[1] = freq then 
+print(`freq(L): frequency notation for the list L`):
+print(`input: list L`):
+print(`output: list with frequency of each element (including zero!), so freq(L)[i] = number of occurrences of i-1 in L`):
+print(`example: freq([1,3,2,1,3,4]);`):
+
+elif nargs = 1 and args[1] = ff then 
+print(`ff(n,k): falling factorial n^\underline{k} `):
+print(`input: integers n and k (k <= n)`):
+print(`output: falling factorial n^\underline{k} = n*(n-1)*...*(n-k+1)`):
+print(`example: ff(4,2);`):
+
+elif nargs = 1 and args[1]=SV then 
+print(`SV(k,V): scores for each candidate from voting sequence V with k total candidates`): 
+print(`input: number of candidates k and voting sequence V `):
+print(`output: the list where L[i] = # votes cast for candidate i  `):
+print(`example: SV(3,[1,1,2,2,2,3,3,1,2])`):
+
+elif nargs = 1 and args[1]=Rank then 
+print(`Rank(L): index sets in order of rank of the elements, largest to smallest`): 
+print(`input: list of numbers L`):
+print(`output: a list of index sets, where entry i is the set of indices where the i-th smallest element occurs in L `):
+print(`example: Rank([1,1,2,2,3,3])`):
+
+
+
+else 
+print(`No such function exists. Type Help1(); for a list of functions.`):
+
+fi:
+
+end:
+
+
+################################################################################################################################
+
+
+## K LANE SIMULATION 
+# 
+# input: number of lanes k and a k-ary string A corresponding to an arrival sequence
+# output: list L = [L1,...,Lk] where Li is the list (in order) of cars in lane i 
+# note that the lanes are read from right to left, so L[1] is the rightmost lane, and L[k] is the leftmost  
+
+kLane := proc(k,A) local i,j,m,L,cons,consR:
+if not convert(A,set) subset {seq(1..k)} then 
+    error(`Car preferences require more than the input k many lanes.`):
+fi:
+
+L := [seq([], i=1..k)]:     # initialize lane lists 
+
+for j from 1 to nops(A) do 
+    cons := L[(1..A[j])]:  # lanes to consider based on car preference 
+    m := min[index]([seq(nops(cons[i]), i=1..nops(cons))]):     # index of shortest lane, with the first lane (rightmost) selected in a tie 
+    L := [ op(L[1..m-1]), [op(L[m]),j], op(L[m+1..-1])]:
+od:
+
+L: # note that output is right lane to left lane 
+end:
+
+
+## K CANDIDATE VOTING SIMULATION
+# 
+# input: number of candidates k and a k-ary string A corresponding to the votes cast
+# output: tableau formed by adding element n to row i when voter n casts a vote for the i-th most popular candidate  
+
+kVote := proc(k,A) local i,j,T,votes,numVotes,sortedNumVotes,c,r:
+T := [[]$k]: # initialize tableau
+votes := [[]$k]:
+
+for i from 1 to nops(A) do 
+    c := A[i]:
+    votes := [op(votes[1..c-1]), [op(votes[c]), i], op(votes[c+1..-1])];
+    numVotes := [seq(nops(votes[i]), i=1..k)]:
+    sortedNumVotes := sort(numVotes):
+
+    # which rows of the SYT have the number of votes that candidate c has 
+    # put i in the lowest row (first occurring) with that many votes?
+    member(nops(votes[c]), sortedNumVotes, 'r'):
+    T := [op(T[1..r-1]), [op(T[r]),i], op(T[r+1..-1])]:
+od:
+
+[seq(T[k-i], i=0..k-1)]:   # reverse the order 
+end:
+
+
+## K-ARY STRINGS 
+# 
+# input string length n and size of alphabet k 
+# output set of all strings of length n with entries 1,...,k
+
+K := proc(k,n) local K1,K2,kappa,k1:
+option remember:
+
+if n = 1 then 
+    RETURN({ seq([kappa], kappa=1..k)}):
+else 
+    K1 := K(k,n-1):
+    K2 := { seq( seq( [op(k1),kappa] , kappa=1..k ), k1 in K1) }:
+fi: 
+
+K2:
+end:
+
+
+## LANE LENGTHS 
+# 
+# input arrival sequence A and number of lanes k 
+# output a list of lengths of lanes after the arrival sequence has been resolved, i.e., L[1] = number of cars in the rightmost lane, 
+# through L[k] = number of cars in the leftmost lane 
+
+laneLens := proc(k,A) local i,L:
+L := kLane(k,A):
+[seq(nops(L[i]), i=1..k)]:
+end:
+
+
+## (GENERAL) STATISTICAL GENERATING FUNCTION FOR K LANE ARRIVAL SEQUENCES
+# 
+# input number of lanes k, arrival sequence length l, lane index i, and optional parameter for variable (default x)
+# output polynomial where the coefficient of x^n is the number of arrival sequences which result in n cars in the lane index i 
+
+GFlgen := proc(k,n,i:=1,var := x) local A:
+if not i >= 1 and i <= k then 
+    error(`Lane index not in range {1,..,k}`):
+fi:
+
+add(var^nops(kLane(k,A)[i]), A in K(k,n)):
+end:
+
+
+## MULTIVARIATE STATISTICAL GENERATING FUNCTION FOR K LANE ARRIVAL SEQUENCES
+# 
+# input number of lanes k, arrival sequence length l, and optional parameter for variable (default x)
+# output polynomial where the coefficient of x_1^n_1*x_2^n_2*...*x_k^n_k is the number of arrival sequences which result in [n_1, n_2, ..., n_k] 
+
+GFlmulti := proc(k,n,var := x) local A,a,f,i:
+# to cut down on runtime, but does increase memory 
+f := 0: 
+
+for A in K(k,n) do 
+    a := kLane(k,A):
+    f := f + mul( var[i]^nops(a[i]) , i=1..k ):
+od: 
+
+f:
+end:
+
+
+## GENERATING FUNCTION FOR ARRIVAL SEQUENCES USING CLOSED FORM 
+# 
+# input number of lanes k, number of cars n, and optional variable (default x)
+# outputs the multivariate generating function calculated using closed form for all partitions of n into k pieces
+
+GFlcf := proc(k,n,var:=x) local p,i:
+add(CF(p)*mul(var[i]^p[i],i=1..k) , p in Parnk(n,k)):
+end:
+
+
+
+## EXPECTED VALUE BY BRUTE FORCE 
+# 
+# input number of lanes k, number of cars n, and index of lane of interest i (from right to left, default 1)
+# output expected number of cars in lane indexed by i for a fixed length l 
+
+EVbf := proc(k,n,i:=1) local A:
+add(nops(kLane(k,A)[i]), A in K(k,n))/k^n:
+end:
+
+
+
+### EXPECTED VALUE COMPUTED CLEVERLY 
+# 
+# input the number of lanes k, number of cans n, and index of lane of interest i (from right to left, default 1)
+# output expected number of cars in lane indexed by i, using closed form from Theorem 13
+
+EVc := proc(k,n,i:=1) local f,g,j:
+f := GFlcf(k,n,x):
+g := diff(f,x[i]):
+subs({seq(x[j]=1, j=1..k)}, g)/(k^n):
+end:
+
+
+
+## 2 LANE RECURRENCE 
+# 
+# input integers m >= n representing number of cars in ending state with n cars in left lane, m cars in right lane 
+# output number of arrival sequences which end with those lane lengths, using recurrence 
+
+G2 := proc(m,n)
+option remember: 
+
+if m = 0 and n = 0 then 
+    RETURN(1):
+elif m <> 0 and n = 0 then 
+    RETURN(2):
+fi:
+
+if m > n+1 then 
+    G2(m,n-1) + G2(m-1,n):
+elif m = n+1 then 
+    G2(m,n-1) + 2*G2(m-1,n):
+elif m = n then
+    G2(m,n-1):
+else 
+    RETURN(0):   # m < n --> not allowed!
+fi:
+
+end:
+
+
+### G3 USING RECURRENCE 
+# 
+# input positive integers a,b,c 
+# output the number of arrival sequences which resolve to the SYT with shape [a,b,c] using recurrence  
+
+G3 := proc(a,b,c) 
+option remember: 
+
+if not (a >= b and b >=c and c >= 0) then 
+    RETURN(0):
+elif a=0 and b=0 and c=0 then 
+    RETURN(1):
+fi: 
+
+if a-b > 1 and b-c> 1 then 
+    G3(a-1,b,c) + G3(a,b-1,c) + G3(a,b,c-1):     # most common case 
+elif a-b <= 1 and b-c > 1 then 
+    2*G3(a-1,b,c) + G3(a,b-1,c) + G3(a,b,c-1):   # case 2 & 3 together 
+elif a-b > 1 and b-c <= 1 then 
+    G3(a-1,b,c) + 2*G3(a,b-1,c) + G3(a,b,c-1):   # case 4 & 5 together
+elif a-b =1 and b-c = 1 then 
+    2*G3(a-1,b,c) + 2*G3(a,b-1,c) + G3(a,b,c-1):
+else                                                # at least one of a-b or b-c is = 0 
+    3*G3(a-1,b,c) + 2*G3(a,b-1,c) + G3(a,b,c-1):
+fi:
+
+end:
+
+
+### G4 RECURRENCE 
+# 
+# input positive integers a,b,c,d
+# output the number of arrival sequences which resolve to the SYT with shape [a,b,c] using recurrence
+
+G4 := proc(a,b,c,d) local f,i,L,L1,D,t,co:
+option remember: 
+
+if not (a >= b and b >=c and c >= d and d >= 0) then           
+    RETURN(0):
+elif a=0 and b=0 and c=0 and d=0 then 
+    RETURN(1):
+fi: 
+
+f := 0:     # recurrence function, will modify as we go 
+L := [a,b,c,d]: 
+D := [seq(L[i]-L[i+1], i=1..3)]:
+
+for i from 1 to 3 do 
+    L1 := L - [0$(i-1),1,0$(4-i)]:         
+        
+    if L[i] - L[i+1] > 1 then  
+        f := f + G4(op(L1)):
+
+    elif L[i] - L[i+1] = 0 then 
+        f := f : 
+        
+    elif L[i] - L[i+1] = 1 then 
+        co := 2:
+
+        for t from i+1 to 4-1 while L[t] - L[t+1] = 0 do 
+            co ++:
+        od: 
+
+        f := f + co*G4(op(L1)):
+
+    fi:
+od:
+
+f := f + G4(op(L - [0$(4-1),1])):
+ 
+end:
+
+
+
+### PARTITIONS OF N INTO K (POSSIBLY EMPTY) PIECES
+#
+# input integers n and k 
+# outputs the set of weakly decreasing nonnegative sequences of length k that add up to k (allowing zero!)
+
+Parnk:=proc(n,k) local a:
+option remember:
+{seq(op(Parnk1(n,k,a)),a=0..n)}:
+end:
+
+
+## HELPER: RECURSIVE CONSTRUCTOR OF PARTITIONS
+# 
+# input integers n, k, and a 
+# outputs the set of weakly decreasing nonnegative sequences of length k that add up to k with largest part a
+
+Parnk1:=proc(n,k,a) local S,a1,s,S1:
+option remember:
+if k=1 then
+if n=a then
+ RETURN({[a]}):
+ else
+  RETURN({}):
+fi:
+fi:
+
+S:={}:
+
+for a1 from 0 to a do
+ S1:=Parnk1(n-a,k-1,a1):
+ S:=S union {seq([a, op(s)], s in S1)}:
+od:
+S:
+end:
+
+
+### CLOSED FORM 
+# 
+# input a list of lane lengths corresponding to an endstate 
+# outputs the number of k-lane arrival sequences ending in that configuration by the closed form from Theorem 13
+
+CF := proc(endstate) local p,i,e,k:
+k := nops(endstate): 
+
+for i from 1 to k-1 do 
+    if not endstate[i] >= endstate[i+1] then 
+        RETURN(0):
+    fi:
+od:
+
+p := freq(endstate):
+multinomial(k,op(p))*multinomial(add(e, e in endstate), op(endstate))
+
+end:
+
+
+### SYT OF SHAPE L 
+# copied from code written in 642:640 at rutgers university in spring 2026 
+# 
+# input a SYT shape L as a list of nonincreasing positive integers 
+# output the set of all SYT with the input shape 
+
+SYT:=proc(L) local i, k,n,S,L1,S1,s1,s,LL,kk,ext:
+option remember:
+
+k:=nops(L):
+n:=add(L[i],i=1..k):
+if k=0 then
+    RETURN({[]}):
+fi:
+
+# handle empty rows 
+if member(0,L) then 
+    member(0,L,'i'):
+    LL := L[1..i-1]: # slice off the 0s 
+    ext := k - (i-1): # number of empty rows to add back on at end 
+else 
+    LL := L:
+    ext := 0:
+fi:
+
+kk := k-ext: # number of rows being used
+
+S:={}:
+# search for all rows where entry n can be legally placed 
+for i from 1 to kk-1 do
+    if LL[i]>LL[i+1] then
+        L1:=[op(1..i-1,LL),LL[i]-1,op(i+1..kk,LL)]:
+        S1:=SYT(L1):
+        S:=S union {seq([op(1..i-1,s1),[op(s1[i]),n],op(i+1..kk,s1)],s1  in S1)}:
+    fi:
+od:
+
+if LL[kk]>1 then
+    L1:=[op(1..kk-1,LL),LL[kk]-1]:
+
+    S1:=SYT(L1):
+    S:=S union {seq([op(1..kk-1,s1),[op(s1[kk]),n]],s1  in S1)}:
+else
+    L1:=[op(1..kk-1,LL)]:
+    S1:=SYT(L1):
+    S:=S union {seq([op(1..kk-1,s1), [n]],s1  in S1)}:
+fi:
+
+# add zeros back on
+{seq( [op(s),[]$ext], s in S)}:
+end:
+
+
+## ALL SYT OF SIZE n WITH k ROWS 
+# 
+# input integers k and n
+# outputs the set (generated recursively) of all SYT with k rows and n entries
+
+SYTkn := proc(k,n) local T: 
+option remember: 
+
+if n=0 then 
+    RETURN ({[[]$k]}):
+fi:
+
+{seq( op(SYTaddn(T)) , T in SYTkn(k,n-1))}: 
+end:
+
+
+## HELPER: SYT ADD ELEMENT "n" IN ALL POSSIBLE POSITIONS 
+#
+# inputs current tableau T 
+# outputs the set of all tableau (WITH SAME NUMBER OF ROWS AS T) with element n added to each legal position
+
+SYTaddn := proc(T) local n,k,S,i:
+
+if convert(T,set) = {[]} then 
+    n := 1:
+else
+    n := max(T) +1:    # next largest element to add to SYT
+fi: 
+
+k := nops(T):
+
+S := { [ [op(T[1]),n], op(T[2..-1]) ] }:  # add n to the end of the first row (always allowed)
+
+# add element n to the end of any existing row, or to its own new row! full shape cannot have more than k rows 
+for i from 2 to k do 
+    if nops(T[i])+1 <= nops(T[i-1]) then   
+        S := S union { [ op(T[1..i-1]), [op(T[i]),n], op(T[i+1..k])  ] }:
+    fi:
+od:
+
+S:
+end:
+
+
+## SYT RECURSIVE DELETION OF BOX "n"
+#
+# input a SYT which represents a final configuration for a lane merging problem 
+# outputs a new SYT, T1, which removes the box labelled n, and the number of possible candidate digits in {0,..,k-1}
+# which could have been in position "n" of an arrival sequence which produced the tableau T
+
+SYTdelete := proc(T) local n,k,c,r,T1,count: 
+if not isSYT(T) then 
+    error `Input tableau is not a SYT`: 
+fi:
+
+n := max(T):
+k := nops(T): 
+c := [max[index](T)]:     # location of the maximum element, n
+
+# new tableau with element n removed 
+T1 := [op(T[1..c[1]-1]), [op(T[c[1]][1..-2])], op(T[c[1]+1..-1])]:
+
+# how many open spots are below the position c when the number n was placed? equivalent to how many digit options we have in the arrival sequence
+count := 1:
+
+for r from c[1]+1 to k while nops(T[r]) = c[2]-1 do
+    count++:
+od:
+
+count, T1:
+end:
+
+
+
+### IS AN SYT (ERROR CHECKER )
+# 
+# inputs a tableau T 
+# outputs boolean true/false to the question "is T a standard young tableau?" 
+
+isSYT := proc(T) local n,k,i,j,lens:
+k := nops(T):
+n := add(nops(T[i]), i=1..k):
+
+# check shape 
+lens := [seq(nops(T[i]), i=1..k)]:
+for j from 2 to nops(lens) do 
+    if not lens[j-1] >= lens[j] then 
+        RETURN(false):
+    fi:
+od:
+
+# check *standard* young tableau
+if not {seq( op(T[i]) , i=1..k )} = {seq(1..n)} then      # set of entries is not {1,...,n = number of boxes}
+    RETURN(false):
+fi:
+
+# check increasing rows 
+for i from 1 to k do 
+    for j from 2 to nops(T[i]) do 
+        if not T[i][j-1] < T[i][j] then
+            RETURN(false):
+        fi:
+    od:
+od:
+
+
+# check increasing columns. j is the column number
+for j from 1 to nops(T[1]) do 
+    for i from 2 to k while nops(T[i]) >= j do      # for each successive row whose length is long enough to have an entry
+        if not T[i-1][j] < T[i][j] then 
+            RETURN(false):
+        fi:
+    od:
+od:
+
+true:
+end:
+
+#############################################################################################################################################################
+
+### SYT MAPPING ENUMERATION 
+
+## NUMBER OF SEQUENCES MAPPING TO AN SYT
+# 
+# input tableau T and number of lanes k 
+# output the number of arrival sequences for k lanes which produce the final arrangement in 
+# the tableau T, computed with the product formula 
+
+numSeqToSYT := proc(T,k) local i,j,d,m:
+if not isSYT(T) then 
+    error `Input tableau is not a SYT`: 
+fi:
+
+if not nops(T) <= k then 
+    error `Tableau has too many rows for suggested number of lanes.`
+fi:
+
+# number of occupied rows, m 
+m := nops( convert(T,set) minus {[]} ):   # every nonempty row should be distinct, since *is* a SYT! 
+
+ff(k,m)*mul( mul(1+bounceCounter(T,[i,j]), j=2..nops(T[i]) ), i=1..k-1 ):
+end:
+
+
+## NUMBER OF SEQUENCES MAPPING TO AN SYT - CLEVER
+# same as numSeqToSYT, but uses recursion adapted from SYTdelete to speed up computation time 
+# 
+# input tableau T and number of lanes k 
+# output the number of arrival sequences for k lanes which produce the final arrangement in 
+# the tableau T, computed with the product formula 
+
+numSeqToSYTc := proc(T,k) local i,j,d:
+option remember: 
+
+if not isSYT(T) then 
+    error `Input tableau is not a SYT`: 
+fi:
+
+if not nops(T) <= k then 
+    error `Tableau has too many rows for suggested number of lanes.`
+fi:
+
+sts1(T):
+end:
+
+
+## HELPER: RECURSIVE PRODUCT CALCULATOR/TABLEAU DELETION
+#
+# input tableau T 
+# output product obtained from multiplying the number of possible digits in a k-ary arrival sequence 
+# which resolves to the SYT T
+
+sts1 := proc(T) local n,k,c,r,T1,count:
+option remember: #?
+
+if convert(T,set) = {[]} then 
+    RETURN(1):
+fi:
+
+n := max(T):
+k := nops(T): 
+c := [max[index](T)]:     # location of the maximum element, n
+
+# new tableau with element n removed 
+T1 := [op(T[1..c[1]-1]), [op(T[c[1]][1..-2])], op(T[c[1]+1..-1])]:
+
+# how many open spots are below the position c when the number n was placed? equivalent to how many digit options we have in the arrival sequence
+count := 1:
+
+for r from c[1]+1 to k while nops(T[r]) = c[2]-1 do
+    count++:
+od:
+
+count*sts1(T1):
+end:
+
+
+## BOUNCE COUNTER 
+# 
+# input tableau T and location of a cell c (as coordinates [i,j])
+# output the number of cells in the column j-1 and row i+1 or larger which are smaller than the entry in cell c
+
+bounceCounter := proc(T,c) local i,j,k,x,A,count:
+i := c[1]:
+j := c[2]:
+k := nops(T):
+count := 0:
+
+A := T[i,j]:    # element at top of hook being considered
+
+for x from i+1 to k while nops(T[x]) >= j-1 do 
+    if A > T[x][j-1] then 
+        count++
+    fi:
+od:
+
+count:
+end:
+
+
+## FALLING FACTORIAL 
+#
+# input integers n and k 
+# output falling factorial n^\underline{k}
+
+ff := proc(n,k) local i:
+mul(n-i, i=0..k-1):
+end:
+
+#########################################################################################################################################
+
+## SYT GENERATING FUNCTION - BY BRUTE FORCE 
+#
+# input number of lanes k and number of tableau entries n 
+# output the statistical generating function, computed by brute force, where the coefficient 
+# of var[T] for a tableau T is the number of arrival sequences whose final arrangement is the tableau T 
+
+SYTgfbf := proc(k,n, var := x) local A:
+add(var[kLane(k,A)],A in K(k,n)) ;
+end:
+
+
+## SYT GENERATING FUNCTION - USING PRODUCT
+#
+# input number of lanes k and number of tableau entries n 
+# output the statistical generating function, computed from our bounce size product formula, 
+# where the coefficient of var[T] for a tableau T is the number of arrival sequences whose 
+# final arrangement is the tableau T 
+
+SYTgfc := proc(k,n,var := x) local T:
+add( numSeqToSYTc(T,k)*var[T] , T in SYTkn(k,n)):
+end:
+
+
+## FREQUENCY VECTOR 
+#
+# inputs a list L, outputs a list containing frequency of each l in L 
+# so F[i] = frequency of i-1 in L (note: this includes zero!)
+
+freq := proc(L) local l,F,LL: 
+LL := L + [1$nops(L)]: 
+
+F := [0$max(LL)]:
+
+for l in LL do 
+    F := [op(1..l-1,F), F[l]+1, op(l+1..-1,F)]:
+od:
+
+F: 
+end:
+
+
+## PARTITIONS OF n INTO k PIECES 
+# 
+# input integers n and k 
+# output set of all partitions of n into exactly k (possibly empty) parts
+# i.e., the set of SYT shapes with k rows and n elements 
+
+Park:=proc(n,k) local S,k1,S1,s1:
+option remember:
+
+if n<k then
+   RETURN({}):
+fi:
+
+if k=0 then
+ if n=0 then
+   RETURN({[]}):
+   else
+    RETURN({}):
+fi:
+fi:
+
+S:={}:
+for k1 from 0 to k do
+ S1:=Park(n-k,k1):
+ S:= S union {seq([op(s1+[1$k1]),1$(k-k1)], s1 in S1)}:
+od:
+S:
+end:
+
+
+## MERGING PATH FOR K LANES 
+# 
+# input number of lanes k and arrival sequence A 
+# outputs the list of points in Z^k traced by the merging path drawn by A 
+# using the framework from bardenova et al (2022)
+# i.e., when a car is added to lane n, the coordinate of p corresponding to that lane is incremented by one 
+# where p1 is rightmost lane, p2 is second lane, etc. 
+# note that the lanes are ordered in a mirrored fashion from the ordering used in the lane merging simulations 
+
+mergingP := proc(k,A) local p,q,P,i,j,m: 
+if not convert(A,set) subset {seq(1..k)} then 
+    error(`Car preferences require more than the input k many lanes.`):
+fi:
+
+p := [0$k]:
+P:= [p]:
+
+for j from 1 to nops(A) do 
+    m := min[index](p[1..(A[j])]):      # shortest lane from those considered by the car, with the first lane (rightmost) selected in a tie 
+    p := [op(p[1..m-1]), p[m]+1, op(p[m+1..-1])]:
+    P := [op(P),p]:
+od:
+
+P:
+end:
+
+
+## MAJORITY PATH FOR K LANES 
+# 
+# input number of choices k and voting sequence A 
+# outputs the list of points in Z^k traced by the majority path drawn by A 
+# a point p = [p1, p2, ..., pk] indicates that after m := add(p[i], i=1..k) votes have been cast, 
+# there are p1 votes for the most popular choice, p2 for the second most popular, and so on 
+
+majorityP := proc(k,A) local p,P,j,v: 
+if not convert(A,set) subset {seq(1..k)} then 
+    error(`Voter preferences require more than the input k many options.`):
+fi:
+
+p := [0$k]:     # votes for choices, in order
+P:= [p]:
+
+for j from 1 to nops(A) do 
+    v := A[j]:                                # vote from person j, fixes indexing so 0 occurs first 
+    p := [op(p[1..v-1]), p[v]+1, op(p[v+1..-1])]: 
+    P := [op(P),sort(p, `>`)]:                      
+od:
+
+P:
+end:
+
+
+
+#### STATISTICS 
+
+# order statistics
+OS := proc(v) local i,f:
+f := add(x[v[i]], i=1..nops(v)):
+sort( [ seq(coeff(f,x[i],1), i=0..max(v) )], `>`):
+end:
+
+# variance 
+Var := proc(k,n,i:=1) local f,g,h,av,j: 
+f := GFlcf(k,n,x):
+g := diff(f,x[i]):
+av := subs({seq(x[j]=1, j=1..k)}, g)/(k^n):
+
+h := subs({seq(x[j]=1, j=1..i-1), seq(x[j]=1, j=i+1..k)}, f):
+evalf( add( coeff(h,x[i],j)*(j-av)^2, j=1..n)/(k^n) ):
+end:
+
+
+# standard deviation 
+SD := proc(k,n,i:=1) sqrt(Var(k,n,i)): end:
+
+
+
+
+
+
+
+#####################################################################################
+# Contributions made by Doron Zeilberger, adapted by Aurora Hiveley  
+
+
+### VOTING SEQUENCE GENERATING FUNCTION 
+# 
+# input number of candidates k, number of voters n, and variable (default x)
+# outputs the generating function of end states of votes for all voting sequences of length n with k candidates 
+# using kVote (brute force) 
+
+GFv:=proc(k,n,var := x) local S,s:
+option remember:
+S:=K(k,n):
+add(var[kVote(k,s)], s in S):
+end:
+
+
+### ARRIVAL SEQUENCE GENERATING FUNCTION 
+# 
+# input number of lanes k, number of cars n, and variable (default x)
+# outputs the generating function of end states of votes for all voting sequences of length n with k candidates 
+# using kVote (brute force) 
+
+GFl:=proc(k,n,var := x) local S,s:
+option remember:
+S:=K(k,n):
+add(var[kLane(k,s)], s in S):
+end:
+
+
+### RATIO OF SEQUENCES BEFORE AND AFTER ENTRY n ADDED 
+# 
+# input tableau T 
+# output the ratio of number of sequences producing tableau T and the number of sequences producing T' 
+# where T' = T - [n]. computed by counting from tableau enumeration
+
+RatK:=proc(T):numSeqToSYTc(T,nops(T))/numSeqToSYTc(SYTdelete(T)[2]): end:
+
+
+### VOTING SEQUENCES TABLE 
+# 
+# input number of candidates k and number of voters n 
+# output a table that for each tableau with n boxes and k rows (some possibly empty)
+# shows the set of voter sequences that lead to that tableau
+
+VoteTable:=proc(k,n) local S,T,s,V,v:
+option remember:
+S:=SYTkn(k,n):
+
+for s in S do
+    T[s]:={}:
+od:
+
+V:=K(k,n) :
+
+for v in V do
+    T[kVote(k,v)]:=T[kVote(k,v)] union {v}:
+od:
+
+[op(T),S]:
+end:
+
+
+### ARRIVAL SEQUENCES TABLE 
+# 
+# input number of lanes k and number of cars n 
+# output a table that for each tableau with n boxes and k rows (some possibly empty)
+# shows the set of arrival sequences that lead to that tableau
+
+LaneTable:=proc(k,n) local S,T,s,V,v:
+option remember:
+S:=SYTkn(k,n):
+
+for s in S do
+T[s]:={}:
+od:
+
+V:=K(k,n) :
+
+for v in V do
+T[kLane(k,v)]:=T[kLane(k,v)] union {v}:
+od:
+
+[op(T),S]:
+end:
+
+
+### VOTING SEQUENCES PRODUCING T  
+# 
+# input SYT T
+# output a list of all voting sequences that resolve to T, using VoteTable 
+
+VoteSeqs:=proc(T) local k,n,lu,i:
+k:=nops(T):
+n:=add(nops(T[i]),i=1..k):
+lu:=VoteTable(k,n):
+
+if not member(T,lu[2]) then
+ RETURN(FAIL):
+else
+RETURN(lu[1][T]):
+fi:
+end:
+
+
+### ARRIVAL SEQUENCES PRODUCING T  
+# 
+# input SYT T
+# output a list of all arrival sequences that resolve to T, using LaneTable 
+
+LaneSeqs:=proc(T) local k,n,lu,i:
+k:=nops(T):
+n:=add(nops(T[i]),i=1..k):
+lu:=LaneTable(k,n):
+
+if not member(T,lu[2]) then
+ RETURN(FAIL):
+else
+RETURN(lu[1][T]):
+fi:
+end:
+
+
+### SCORED VOTING 
+# 
+# input number of candidates k and voting sequence V 
+# output the list where L[i] = # votes cast for candidate i 
+
+SV:=proc(k,V) local T,i:
+for i from 1 to k do
+T[i]:=0:
+od:
+
+for i from 1 to nops(v) do
+T[v[i]]:=T[v[i]]+1:
+od:
+[seq(T[i],i=1..k)]:
+end:
+
+
+## INDEX SETS IN ORDER OF ELEMENT RANK 
+# 
+# input list of numbers L 
+# outputs a list of index sets, where entry i is the set of indices where the i-th smallest element occurs in L 
+
+Rank:=proc(L) local S,R,i,gu:
+R:=[]:
+
+S:={seq(i,i=1..nops(L))}:
+
+while S<>{} do
+    gu:=Rank1(L,S):
+    R:=[op(R),gu[1]]:
+    S:=gu[2]:
+od:
+
+R:
+end:
+
+
+### HELPER: MAX ELEMENT INDEX LOCATOR  
+# 
+# input list of integers L and a subset of indices S to compare 
+# outputs the set of indices in S which are home to the largest element of L[S]
+
+Rank1:=proc(L,S) local m,S1,s:
+m:=max(seq(L[s], s in S)):
+
+S1:={}:
+
+for s in S do
+    if L[s]=m then
+        S1:=S1 union {s}:
+    fi:
+od:
+
+[S1,S minus S1]:
+end:
+
+
+
+### EXTENSION OF VOTING SEQUENCE TO VOTE FOR CANDIDATE g 
+# 
+# input number of candidates k, voting sequence V, candidate g (1 <= g <= k)
+# outputs the set of all voting sequences which extend V by casting a vote for candidate g 
+
+ExtVo:=proc(k,V,g) local L,i,S,i1,s:
+L:=Rank(SV(V,k)):
+
+for i from 1 to nops(L) while add(nops(L[i1]),i1=1..i)<g do od:
+S:=L[i]:
+
+{seq([op(V),s],s in S)}:
+end:
+
+
+### VOTING SEQUENCES PRODUCING T  -- CLEVER
+# 
+# input SYT T
+# output a list of all voting sequences that resolve to T, using recursion
+
+VoteSeqsC:=proc(T) local k,i,n,T1,gb,V,v:
+option remember:
+k:=nops(T):
+
+if T=[[]$k] then
+ RETURN({[]}):
+fi:
+n:=add(nops(T[i]),i=1..k):
+
+#gb the row where n lives, i.e. the rank of the party that got bigger
+for i from 1 to k while T[i][-1]<>n do od:
+gb:=i:
+
+T1:=[op(1..gb-1,T),[op(1..nops(T[gb])-1,T[gb])],op(gb+1..nops(T),T)]:
+
+V:=VoteSeqsC(T1):
+{seq(op(ExtVo(k,v,gb)),v in V)}:
+end:
+
+
+### ARRIVAL SEQUENCES PRODUCING T  -- CLEVER
+# 
+# input SYT T
+# output a list of all arrival sequences that resolve to T, using recursion
+
+LaneSeqsC:=proc(T) local k,i,n,T1,gb,V,v,i1:
+option remember:
+k:=nops(T):
+
+if T=[[]$k] then
+    RETURN({[]}):
+fi:
+n:=add(nops(T[i]),i=1..k):
+
+#gb the row where n lives
+for i from 1 to k while T[i][-1]<>n do od:
+gb:=i:
+
+T1:=[op(1..gb-1,T),[op(1..nops(T[gb])-1,T[gb])],op(gb+1..nops(T),T)]:
+
+V:=LaneSeqsC(T1):
+
+if gb=k or nops(T[gb])-nops(T[gb+1])>=2 then
+    RETURN({seq([op(v),gb],v in V)}):
+fi:
+
+for i from gb+1 to k while nops(T[i])=nops(T[gb])-1 do od:
+i:=i-1:
+
+{seq(seq([op(v),i1],i1=gb..i),v in V)}
+end:
+
+
+### RATIO OF SEQUENCES BEFORE AND AFTER ENTRY n ADDED -- CLEVER 
+# 
+# input tableau T 
+# output the ratio of number of sequences producing tableau T and the number of sequences producing T' 
+# where T' = T - [n]. computed by counting size of bounce 
+
+RatKc:=proc(T) local n,k,gb,i:
+k:=nops(T):
+n:=add(nops(T[i]),i=1..k):
+for i from 1 to k while T[i][-1]<>n do od:
+gb:=i:
+for i from gb+1 to k while nops(T[i])=nops(T[gb])-1 do od:
+i:=i-gb:
+end:
+
+
+### ARRIVAL SEQUENCES IN RANGE OF A
+# 
+# input arrival sequence A with k candidates 
+# outputs list of all possible n-th digits of sequence which would produce the same tableau
+# that A produces 
+
+LaneRange:=proc(k,A) local n,T,i,gb,i1:
+n:=nops(A):
+T:=kLane(k,A):
+
+for i from 1 to k while T[i][-1]<>n do od:
+gb:=i:
+
+if gb=k or nops(T[gb])-nops(T[gb+1])>=2 then
+RETURN([gb]):
+fi:
+
+for i from gb+1 to k while nops(T[i])=nops(T[gb])-1 do od:
+i:=i-1:
+
+[seq(i1,i1=gb..i)]:
+end:
+
+
+
+### VOTING SEQUENCES IN RANGE OF V
+# 
+# input voting sequence V with k candidates 
+# outputs list of all possible n-th digits of sequence which would produce the same tableau
+# that V produces 
+
+VoteRange:=proc(k,V) local T,L,i,i1,n,g:
+n:=nops(V):
+T:=kVote(k,V):
+for i from 1 to k while T[i][-1]<>n do od:
+g:=i:
+
+L:=Rank(SV(V,k)):
+ for i from 1 to nops(L) while add(nops(L[i1]),i1=1..i)<g do od:
+ convert(L[i],list):
+
+end:
+
+
